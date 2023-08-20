@@ -20,10 +20,10 @@ data:
   dataset: PanNuke
   dataset_path: # Adapt
   train_folds:
-  - 0
-  - 2
-  val_folds:
   - 1
+  - 3
+  val_folds:
+  - 2
   num_nuclei_classes: 6
   num_tissue_classes: 19
 
