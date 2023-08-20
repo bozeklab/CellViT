@@ -16,6 +16,8 @@ random_seed: 19
 
 gpu: 0
 
+run_sweep: False
+
 data:
   dataset: PanNuke
   dataset_path: /data/pwojcik/SimMIM/pannuke
