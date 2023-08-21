@@ -29,7 +29,7 @@ data:
   num_tissue_classes: 19
 
 model:
-  backbone: SIMVisionTransformer
+  backbone: SimViT
   pretrained_encoder: /data/pwojcik/SimMIM/output_dir_ft/encoder-final.pth # Adapt to your path
   shared_skip_connections: true
 
