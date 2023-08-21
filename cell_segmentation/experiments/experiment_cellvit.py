@@ -578,8 +578,8 @@ class ExperimentCellViT(BaseExperiment):
             model_class = SIMCellViT
             model = model_class(
                 model_sim_path=pretrained_encoder,
-                embed_dim=self.run_conf["model"]["embed_dim"],
-                depth=self.run_conf["model"]["depth"],
+                embed_dim=self.run_conf["model"].get("embed_dim", 768),
+                depth=self.run_conf["model"].get(["depth"], 12),
                 extract_layers=self.run_conf["model"]["extract_layers"],
                 input_channels=self.run_conf["model"].get("input_channels", 3),
                 num_nuclei_classes=self.run_conf["data"]["num_nuclei_classes"],

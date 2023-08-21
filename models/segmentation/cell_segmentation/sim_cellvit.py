@@ -177,6 +177,9 @@ class SIMCellViT(nn.Module):
         self.model_sim_path = model_sim_path
 
         self.encoder = unetr_vit_base_patch16(num_classes=self.num_tissue_classes,
+                                              drop_rate=self.drop_rate,
+                                              attn_drop_rate=self.attn_drop_rate,
+                                              drop_path_rate=self.drop_path_rate,
                                               init_values=None)
 
         if self.embed_dim < 512:
