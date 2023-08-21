@@ -149,7 +149,7 @@ class SIMCellViT(nn.Module):
         input_channels: int,
         depth: int,
         num_heads: int,
-        extract_layers: List,
+        extract_layers: List = [3, 6, 9, 12],
         mlp_ratio: float = 4,
         qkv_bias: bool = True,
         drop_rate: float = 0,
