@@ -520,7 +520,7 @@ class ExperimentCellViT(BaseExperiment):
         Returns:
             CellViT: CellViT training model with given setup
         """
-        implemented_backbones = ["default", "ViT256", "SAM-B", "SAM-L", "SAM-H"]
+        implemented_backbones = ["default", "SimViT", "ViT256", "SAM-B", "SAM-L", "SAM-H"]
         if backbone_type not in implemented_backbones:
             raise NotImplementedError(
                 f"Unknown Backbone Type - Currently supported are: {implemented_backbones}"
