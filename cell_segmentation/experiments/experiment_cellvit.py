@@ -14,6 +14,8 @@ import sys
 
 import yaml
 
+from models.encoders.VIT.sim_vit import SIMVisionTransformer
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
@@ -571,6 +573,25 @@ class ExperimentCellViT(BaseExperiment):
                 self.logger.info(model.load_state_dict(cellvit_pretrained, strict=True))
             model.freeze_encoder()
             self.logger.info("Loaded CellVit256 model")
+        if backbone_type == "SimViT":
+            model_class = SIMVisionTransformer
+            model = model_class(
+                model_sim_path=pretrained_encoder,
+                num_nuclei_classes=self.run_conf["data"]["num_nuclei_classes"],
+                num_tissue_classes=self.run_conf["data"]["num_tissue_classes"],
+                drop_rate=self.run_conf["training"].get("drop_rate", 0),
+                attn_drop_rate=self.run_conf["training"].get("attn_drop_rate", 0),
+                drop_path_rate=self.run_conf["training"].get("drop_path_rate", 0),
+            )
+            model.load_pretrained_encoder(model.model_sim_path)
+            if pretrained_model is not None:
+                self.logger.info(
+                    f"Loading pretrained SIMCellViT model from path: {pretrained_model}"
+                )
+                cellvit_pretrained = torch.load(pretrained_model, map_location="cpu")
+                self.logger.info(model.load_state_dict(cellvit_pretrained, strict=True))
+            model.freeze_encoder()
+            self.logger.info("Loaded SIMCellViT model")
         if backbone_type in ["SAM-B", "SAM-L", "SAM-H"]:
             if shared_skip_connections:
                 model_class = CellViTSAM
