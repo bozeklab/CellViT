@@ -15,6 +15,7 @@ import sys
 import yaml
 
 from models.encoders.VIT.sim_vit import SIMVisionTransformer
+from models.segmentation.cell_segmentation.sim_cellvit import SIMCellViT
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -574,7 +575,7 @@ class ExperimentCellViT(BaseExperiment):
             model.freeze_encoder()
             self.logger.info("Loaded CellVit256 model")
         if backbone_type == "SimViT":
-            model_class = SIMVisionTransformer
+            model_class = SIMCellViT
             model = model_class(
                 model_sim_path=pretrained_encoder,
                 num_nuclei_classes=self.run_conf["data"]["num_nuclei_classes"],
