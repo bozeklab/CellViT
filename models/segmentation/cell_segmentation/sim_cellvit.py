@@ -148,7 +148,7 @@ class SIMCellViT(nn.Module):
         embed_dim: int,
         input_channels: int,
         depth: int,
-        num_heads: int,
+        num_heads: int = 6,
         extract_layers: List = [3, 6, 9, 12],
         mlp_ratio: float = 4,
         qkv_bias: bool = True,
