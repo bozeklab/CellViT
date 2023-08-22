@@ -125,5 +125,4 @@ transformations:
     - 0.5
     - 0.5
 
-checkpoint: "best_checkpoint.pth"
 eval_checkpoint: "latest_checkpoint.pth"
