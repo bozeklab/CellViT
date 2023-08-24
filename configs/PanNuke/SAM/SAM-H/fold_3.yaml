@@ -18,7 +18,7 @@ gpu: 0
 
 data:
   dataset: PanNuke
-  dataset_path: # Adapt
+  dataset_path: /data/pwojcik/SimMIM/pannuke
   train_folds:
   - 2
   - 3
