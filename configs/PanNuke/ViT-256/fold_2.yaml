@@ -18,12 +18,12 @@ gpu: 0
 
 data:
   dataset: PanNuke
-  dataset_path: # Adapt
+  dataset_path: /data/pwojcik/SimMIM/pannuke
   train_folds:
-  - 0
   - 1
-  val_folds:
   - 2
+  val_folds:
+  - 3
   num_nuclei_classes: 6
   num_tissue_classes: 19
 
