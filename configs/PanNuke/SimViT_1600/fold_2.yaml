@@ -2,9 +2,9 @@ logging:
   mode: online
   project: # Adapt
   notes: SIMCellViT
-  log_comment: SIMCellViT_1600-Fold-1
+  log_comment: SIMCellViT_1600-Fold-2
   tags:
-  - "Fold-1"
+  - "Fold-2"
   - "SIMCellViT_1600"
   wandb_dir: ./results
   log_dir: ./results/PanNuke/SIMCellViT_1600
