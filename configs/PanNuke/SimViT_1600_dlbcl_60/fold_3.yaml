@@ -4,7 +4,7 @@ logging:
   notes: SIMCellViT
   log_comment: SIMCellViT_1600_dlbcl_60-Fold-1
   tags:
-  - "Fold-1"
+  - "Fold-3"
   - "SIMCellViT_1600"
   wandb_dir: ./results
   log_dir: ./results/PanNuke/SIMCellViT_1600_dlbcl_60
