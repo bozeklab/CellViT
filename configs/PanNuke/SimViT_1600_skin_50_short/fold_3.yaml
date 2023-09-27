@@ -2,12 +2,12 @@ logging:
   mode: online
   project: # Adapt
   notes: SIMCellViT
-  log_comment: SIMCellViT_1600_skin_50-Fold-3
+  log_comment: SIMCellViT_1600_skin_100-Fold-3
   tags:
   - "Fold-3"
   - "SIMCellViT_1600_skin_75"
   wandb_dir: ./results
-  log_dir: ./results/PanNuke/SIMCellViT_1600_skin_50
+  log_dir: ./results/PanNuke/SIMCellViT_1600_skin_100
   level: Debug
   group: SIMCellViT_dlbcl_60
 
@@ -30,7 +30,7 @@ data:
 
 model:
   backbone: SimViT
-  pretrained_encoder: /data/pwojcik/SimMIM/output_dir_sim1600_skin/checkpoint-49.pth # Adapt to your path
+  pretrained_encoder: /data/pwojcik/SimMIM/output_dir_sim1600_skin/checkpoint-99.pth # Adapt to your path
   shared_skip_connections: true
 
 loss:
