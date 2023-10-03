@@ -599,7 +599,7 @@ class ExperimentCellViT(BaseExperiment):
                 self.logger.info(
                     f"Loading trunk CellViT model from path: {pretrained_trunk_path}"
                 )
-                model.load_pretrained_trunk(pretrained_trunk_path=pretrained_trunk_path)
+                model.load_pretrained_trunk(trunk_path=pretrained_trunk_path)
             model.freeze_encoder()
             self.logger.info("Loaded SIMCellViT model")
         if backbone_type in ["SAM-B", "SAM-L", "SAM-H"]:
