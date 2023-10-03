@@ -241,6 +241,9 @@ class SIMCellViT(nn.Module):
         print('----------Loading pre-trained trunk----------')
         checkpoint = torch.load(trunk_path, map_location='cpu')
         pretrained_dict = {k.replace('module.encoder.', ''): v for k, v in checkpoint['model'].items()}
+        print(pretrained_dict.keys())
+        print(self.state_dict().keys())
+
         branches = ['nuclei_binary_map_decoder', 'hv_map_decoder', 'nuclei_type_maps_decoder']
         _pretrained_dict = []
         for k, v in pretrained_dict.items():
