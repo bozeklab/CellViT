@@ -572,6 +572,13 @@ class ExperimentCellViT(BaseExperiment):
                 )
                 cellvit_pretrained = torch.load(pretrained_model, map_location="cpu")
                 self.logger.info(model.load_state_dict(cellvit_pretrained, strict=True))
+            pretrained_trunk_path = self.run_conf["model"].get("pretrained_trunk", None)
+            if pretrained_trunk_path is not None:
+                self.logger.info(
+                    f"Loading trunk CellViT model from path: {pretrained_trunk_path}"
+                )
+                self.load_pretrained_trunk(pretrained_trunk_path=pretrained_trunk_path)
+
             model.freeze_encoder()
             self.logger.info("Loaded CellVit256 model")
         if backbone_type == "SimViT":

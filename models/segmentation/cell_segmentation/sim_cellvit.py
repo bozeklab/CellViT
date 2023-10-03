@@ -237,6 +237,24 @@ class SIMCellViT(nn.Module):
         msg = self.encoder.load_state_dict(checkpoint['model'], strict=False)
         print(msg)
 
+    def load_pretrained_trunk(self, trunk_path: str):
+        print('----------Loading pre-trained trunk----------')
+        checkpoint = torch.load(trunk_path, map_location='cpu')
+        pretrained_dict = {k.replace('module.encoder.', ''): v for k, v in checkpoint['model'].items()}
+        branches = ['nuclei_binary_map_decoder', 'hv_map_decoder', 'nuclei_type_maps_decoder']
+        _pretrained_dict = []
+        for k, v in pretrained_dict.items():
+            if k.startswith('common_decoder'):
+                for b in branches:
+                    nb = k.replace('common_decoder', b)
+                    _pretrained_dict.append((nb, v))
+                    print(nb)
+            else:
+                _pretrained_dict.append((k, v))
+        pretrained_dict = dict(_pretrained_dict)
+        msg = self.load_state_dict(pretrained_dict, strict=False)
+        print(msg)
+
     def forward(self, x: torch.Tensor, retrieve_tokens: bool = False) -> dict:
         """Forward pass
 
