@@ -234,7 +234,7 @@ class SIMCellViT(nn.Module):
         checkpoint_model = checkpoint['model']
         interpolate_pos_embed(self.encoder, checkpoint_model)
 
-        msg = self.encoder.load_state_dict(checkpoint['model'], strict=False)
+        msg = self.encoder.load_state_dict(checkpoint_model, strict=False)
         print(msg)
 
     def load_pretrained_trunk(self, trunk_path: str):
@@ -250,7 +250,7 @@ class SIMCellViT(nn.Module):
             if k.startswith('common_decoder'):
                 for b in branches:
                     nb = k.replace('common_decoder', b)
-                    _pretrained_dict.append((nb, v))
+                    _pretrained_dict.append((nb, v.clone()))
                     print(nb)
             else:
                 _pretrained_dict.append((k, v))
