@@ -254,7 +254,7 @@ class SIMCellViT(nn.Module):
         #            print(nb)
         #    else:
         #        _pretrained_dict.append((k, v))
-        pretrained_dict = dict(_pretrained_dict)
+        #pretrained_dict = dict(_pretrained_dict)
         msg = self.load_state_dict(pretrained_dict, strict=False)
         print(msg)
 
