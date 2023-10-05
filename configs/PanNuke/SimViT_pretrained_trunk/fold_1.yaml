@@ -31,7 +31,7 @@ data:
 model:
   backbone: SimViT
   pretrained_encoder: /data/pwojcik/SimMIM/output_dir_sim1600_skin/checkpoint-99.pth # Adapt to your path
-  pretrained_trunk: /data/pwojcik/SimMIM/cellvit_trunks/fold1/latest.pth.tar
+  pretrained_trunk: /data/pwojcik/UniGrad/exp/contrastive/latest.pth.tar
   shared_skip_connections: true
 
 loss:
