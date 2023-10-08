@@ -30,7 +30,7 @@ data:
 
 model:
   backbone: SimViT
-  pretrained_encoder: /data/pwojcik/SimMIM/output_dir_sim1600_skin/checkpoint-49.pth # Adapt to your path
+  pretrained_encoder: /data/pwojcik/SimMIM/rcnn/checkpoint-69.pth # Adapt to your path
   shared_skip_connections: true
 
 loss:
@@ -83,7 +83,7 @@ training:
     - 0.95
     lr: 0.0003
     weight_decay: 0.0001
-  unfreeze_epoch: 35
+  unfreeze_epoch: 25
   sampling_gamma: 0.85
   sampling_strategy: cell+tissue
 
