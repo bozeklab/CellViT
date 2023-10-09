@@ -30,7 +30,7 @@ data:
 
 model:
   backbone: SimViT
-  pretrained_encoder: /data/pwojcik/SimMIM/pn_13/checkpoint-latest.pth # Adapt to your path
+  pretrained_encoder: /data/pwojcik/SimMIM/pn_13_nb/SimMIM/output_dir_pn/checkpoint-latest.pth # Adapt to your path
   shared_skip_connections: true
 
 loss:
