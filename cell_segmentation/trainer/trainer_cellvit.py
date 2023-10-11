@@ -532,7 +532,8 @@ class CellViTTrainer(BaseTrainer):
         gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
         # calculate loss
-        _ = self.calculate_sup_loss(predictions, gt)
+        loss = self.calculate_sup_loss(predictions, gt)
+        self.loss_avg_tracker["Total_Loss"].update(loss.detach().cpu().numpy())
 
         # get metrics for this batch
         batch_metrics = self.calculate_step_metric_validation(predictions, gt)
