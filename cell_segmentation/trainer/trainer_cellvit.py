@@ -138,8 +138,6 @@ class CellViTTrainer(BaseTrainer):
         self.model.train()
         self.model_teacher.eval()
 
-        u_loader_iter = iter(train_u_dataloader)
-
         if epoch >= unfreeze_epoch:
             self.model.unfreeze_encoder()
 
@@ -164,7 +162,7 @@ class CellViTTrainer(BaseTrainer):
         train_loop = tqdm.tqdm(enumerate(train_dataloader), total=len(train_dataloader))
 
         for batch_idx, batch in train_loop:
-            u_img = u_loader_iter.next()
+            u_img = train_u_dataloader.next()
             return_example_images = batch_idx == select_example_image
             batch = batch[0], u_img, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(

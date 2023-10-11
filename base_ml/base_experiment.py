@@ -372,6 +372,17 @@ class BaseExperiment:
         np.random.seed(worker_seed)
         random.seed(worker_seed)
 
+    @staticmethod
+    def seed_worker2(worker_id) -> None:
+        """Seed a worker
+
+        Args:
+            worker_id (_type_): Worker ID
+        """
+        worker_seed = (torch.initial_seed() + 5) % 2**32
+        np.random.seed(worker_seed)
+        random.seed(worker_seed)
+
     def close_remaining_logger(self) -> None:
         """Close all remaining loggers"""
         logger = logging.getLogger("__main__")
