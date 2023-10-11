@@ -111,9 +111,9 @@ class CellViTTrainer(BaseTrainer):
         self.magnification = magnification
 
         # setup logging objects
-        self.loss_avg_tracker = {"Supervised_Loss": AverageMeter("Total_Loss", ":.4f")}
-        self.loss_avg_tracker = {"Unsupervised_Loss": AverageMeter("Total_Loss", ":.4f")}
-        self.loss_avg_tracker = {"Total_Loss": AverageMeter("Total_Loss", ":.4f")}
+        self.loss_avg_tracker = {"Supervised_Loss": AverageMeter("Total_Loss", ":.4f"),
+                                 "Unsupervised_Loss": AverageMeter("Total_Loss", ":.4f"),
+                                 "Total_Loss": AverageMeter("Total_Loss", ":.4f")}
         for branch, loss_fns in self.loss_fn_dict.items():
             for loss_name in loss_fns:
                 self.loss_avg_tracker[f"{branch}_{loss_name}"] = AverageMeter(
