@@ -293,12 +293,12 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u_strong_[k] = predictions_all_[k][num_labeled:]
 
                     # reshaping and postprocessing
-                    predictions_l = self.unpack_predictions(predictions=predictions_l_)
+                    predictions = self.unpack_predictions(predictions=predictions_l_)
                     predictions_u_strong = self.unpack_predictions(predictions=predictions_u_strong_)
                     gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
                     # calculate loss
-                    sup_loss = self.calculate_sup_loss(predictions_l, gt)
+                    sup_loss = self.calculate_sup_loss(predictions, gt)
 
                     # unsupervised loss
                     unsup_loss, _ = self.compute_unsupervised_loss_by_threshold(predictions_u_strong["nuclei_type_map"],
