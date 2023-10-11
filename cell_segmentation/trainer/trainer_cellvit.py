@@ -122,7 +122,7 @@ class CellViTTrainer(BaseTrainer):
         self.batch_avg_tissue_acc = AverageMeter("Batch_avg_tissue_ACC", ":4.f")
 
     def train_epoch(
-        self, epoch: int, train_dataloader: DataLoader, unfreeze_epoch: int = 50
+        self, epoch: int, train_dataloader: DataLoader, train_u_dataloader: DataLoader, unfreeze_epoch: int = 50
     ) -> Tuple[dict, dict]:
         """Training logic for a training epoch
 
@@ -137,6 +137,9 @@ class CellViTTrainer(BaseTrainer):
         """
         self.model.train()
         self.model_teacher.eval()
+
+        u_loader_iter = iter(train_u_dataloader)
+
         if epoch >= unfreeze_epoch:
             self.model.unfreeze_encoder()
 
@@ -161,7 +164,9 @@ class CellViTTrainer(BaseTrainer):
         train_loop = tqdm.tqdm(enumerate(train_dataloader), total=len(train_dataloader))
 
         for batch_idx, batch in train_loop:
+            u_img = u_loader_iter.next()
             return_example_images = batch_idx == select_example_image
+            batch = batch[0], u_img, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
                 batch,
                 batch_idx,
@@ -313,7 +318,7 @@ class CellViTTrainer(BaseTrainer):
 
                 with torch.no_grad():
                     if epoch > self.experiment_config["training"].get("sup_only_epoch", 0):
-                        ema_decay = min(1 - 1 / (batch_idx - len(loader_l) * self.experiment_config["training"].get("sup_only_epoch", 0)
+                        ema_decay = min(1 - 1 / (batch_idx - num_batches * self.experiment_config["training"].get("sup_only_epoch", 0)
                                     + 1
                             ),
                             ema_decay_origin,

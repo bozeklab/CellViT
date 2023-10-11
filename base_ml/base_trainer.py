@@ -76,7 +76,7 @@ class BaseTrainer:
 
     @abstractmethod
     def train_epoch(
-        self, epoch: int, train_loader: DataLoader, **kwargs
+        self, epoch: int, train_loader: DataLoader, train_u_dataloader: DataLoader, **kwargs
     ) -> Tuple[dict, dict]:
         """Training logic for a training epoch
 
@@ -146,6 +146,7 @@ class BaseTrainer:
         self,
         epochs: int,
         train_dataloader: DataLoader,
+        train_u_dataloader: DataLoader,
         val_dataloader: DataLoader,
         metric_init: dict = None,
         **kwargs,
@@ -172,7 +173,7 @@ class BaseTrainer:
             # training epoch
             self.logger.info(f"Epoch: {epoch+1}/{epochs}")
             train_scalar_metrics, train_image_metrics = self.train_epoch(
-                epoch, train_dataloader, **kwargs
+                epoch, train_dataloader, train_u_dataloader, **kwargs
             )
             wandb.log(train_scalar_metrics, step=epoch + 1)
             if self.log_images:

@@ -207,10 +207,21 @@ class ExperimentCellViT(BaseExperiment):
             input_shape=self.run_conf["data"].get("input_shape", 256),
         )
 
+        train_u_transforms, _ = self.get_transforms(
+            self.run_conf["transformations_strong"],
+            input_shape=self.run_conf["data"].get("input_shape", 256),
+        )
+
         dataset_name = self.run_conf["data"]["dataset"]
         train_dataset, val_dataset = self.get_datasets(
             dataset_name=dataset_name,
             train_transforms=train_transforms,
+            val_transforms=val_transforms,
+        )
+
+        train_u_dataset, _ = self.get_datasets(
+            dataset_name=dataset_name,
+            train_transforms=train_u_transforms,
             val_transforms=val_transforms,
         )
 
@@ -221,11 +232,26 @@ class ExperimentCellViT(BaseExperiment):
             gamma=self.run_conf["training"].get("sampling_gamma", 1),
         )
 
+        training_u_sampler = self.get_sampler(
+            train_dataset=train_u_dataset,
+            strategy=self.run_conf["training"].get("sampling_strategy", "random"),
+            gamma=self.run_conf["training"].get("sampling_gamma", 1),
+        )
+
         # define dataloaders
         train_dataloader = DataLoader(
             train_dataset,
             batch_size=self.run_conf["training"]["batch_size"],
             sampler=training_sampler,
+            num_workers=16,
+            pin_memory=False,
+            worker_init_fn=self.seed_worker,
+        )
+
+        train_u_dataloader = DataLoader(
+            train_dataset,
+            batch_size=self.run_conf["training"]["batch_size"],
+            sampler=training_u_sampler,
             num_workers=16,
             pin_memory=False,
             worker_init_fn=self.seed_worker,
@@ -269,6 +295,7 @@ class ExperimentCellViT(BaseExperiment):
         trainer.fit(
             epochs=self.run_conf["training"]["epochs"],
             train_dataloader=train_dataloader,
+            train_u_dataloader=train_u_dataloader,
             val_dataloader=val_dataloader,
             metric_init=self.get_wandb_init_dict(),
             unfreeze_epoch=self.run_conf["training"]["unfreeze_epoch"],
