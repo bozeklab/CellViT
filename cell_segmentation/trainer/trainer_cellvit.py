@@ -668,7 +668,9 @@ class CellViTTrainer(BaseTrainer):
         thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
         target[~thresh_mask] = 255
         loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
-        return loss.mean(), thresh_mask.float().mean()
+        loss = loss.mean()
+        self.loss_avg_tracker["Supervised_Loss"].update(loss.detach().cpu().numpy())
+        return loss, thresh_mask.float().mean()
 
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
         """Calculate the loss
