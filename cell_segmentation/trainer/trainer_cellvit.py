@@ -286,8 +286,11 @@ class CellViTTrainer(BaseTrainer):
                     num_labeled = imgs.shape[0]
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs), dim=0))
 
-                    predictions_l_ = predictions_all_[:num_labeled]
-                    predictions_u_strong_ = predictions_all_[num_labeled:]
+                    predictions_l_ = {}
+                    predictions_u_strong_ = {}
+                    for k in predictions_all_.keys():
+                        predictions_l_[k] = predictions_all_[k][:num_labeled]
+                        predictions_u_strong_[k] = predictions_all_[k][num_labeled:]
 
                     # reshaping and postprocessing
                     predictions_l = self.unpack_predictions(predictions=predictions_l_)
