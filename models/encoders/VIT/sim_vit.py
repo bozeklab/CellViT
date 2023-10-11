@@ -97,9 +97,6 @@ class SIMVisionTransformer(timm.models.vision_transformer.VisionTransformer):
 
         self.extract_layers = kwargs.pop('extract_layers')
 
-        print('!!!!')
-        print(kwargs)
-
         super(SIMVisionTransformer, self).__init__(**kwargs)
 
         self.patch_size = kwargs['patch_size']
