@@ -196,6 +196,8 @@ class CellViTTrainer(BaseTrainer):
 
         scalar_metrics = {
             "Loss/Train": self.loss_avg_tracker["Total_Loss"].avg,
+            "Loss/Train_Supervised": self.loss_avg_tracker["Supervised_Loss"].avg,
+            "Loss/Train_Unsupervised": self.loss_avg_tracker["Unsupervised_Loss"].avg,
             "Binary-Cell-Dice-Mean/Train": np.nanmean(binary_dice_scores),
             "Binary-Cell-Jacard-Mean/Train": np.nanmean(binary_jaccard_scores),
             "Tissue-Multiclass-Accuracy/Train": tissue_detection_accuracy,
@@ -210,6 +212,8 @@ class CellViTTrainer(BaseTrainer):
         self.logger.info(
             f"{'Training epoch stats:' : <25} "
             f"Loss: {self.loss_avg_tracker['Total_Loss'].avg:.4f} - "
+            f"Supervised: {self.loss_avg_tracker['Supervised_Loss'].avg:.4f} - "
+            f"Unsupervised: {self.loss_avg_tracker['Unsupervised_Loss'].avg:.4f} - "
             f"Binary-Cell-Dice: {np.nanmean(binary_dice_scores):.4f} - "
             f"Binary-Cell-Jacard: {np.nanmean(binary_jaccard_scores):.4f} - "
             f"Tissue-MC-Acc.: {tissue_detection_accuracy:.4f}"
