@@ -664,14 +664,12 @@ class CellViTTrainer(BaseTrainer):
         return gt
 
     def compute_unsupervised_loss_by_threshold(self, predict, target, logits, thresh=0.95):
-        batch_size, num_class, h, w = predict.shape
+        #batch_size, num_class, h, w = predict.shape
         thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
         target[~thresh_mask] = 255
         loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
         loss = loss.mean()
         self.loss_avg_tracker["Supervised_Loss"].update(loss.detach().cpu().numpy())
-        print('!!!')
-        print(loss)
         return loss, thresh_mask.float().mean()
 
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
