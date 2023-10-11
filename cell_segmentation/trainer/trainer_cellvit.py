@@ -394,6 +394,8 @@ class CellViTTrainer(BaseTrainer):
 
         # reset metrics
         self.loss_avg_tracker["Total_Loss"].reset()
+        self.loss_avg_tracker["Supervised_Loss"].reset()
+        self.loss_avg_tracker["Unsupervised_Loss"].reset()
         for branch, loss_fns in self.loss_fn_dict.items():
             for loss_name in loss_fns:
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].reset()
