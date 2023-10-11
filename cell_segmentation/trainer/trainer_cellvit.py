@@ -141,6 +141,8 @@ class CellViTTrainer(BaseTrainer):
         if epoch >= unfreeze_epoch:
             self.model.unfreeze_encoder()
 
+        train_u_dataloader_iter = iter(train_u_dataloader)
+
         binary_dice_scores = []
         binary_jaccard_scores = []
         tissue_pred = []
@@ -162,7 +164,7 @@ class CellViTTrainer(BaseTrainer):
         train_loop = tqdm.tqdm(enumerate(train_dataloader), total=len(train_dataloader))
 
         for batch_idx, batch in train_loop:
-            u_img = train_u_dataloader.next()
+            u_img = train_u_dataloader_iter.next()
             return_example_images = batch_idx == select_example_image
             batch = batch[0], u_img, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
