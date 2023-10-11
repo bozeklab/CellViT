@@ -186,7 +186,9 @@ class CellViTTrainer(BaseTrainer):
             tissue_gt.append(batch_metrics["tissue_gt"])
             train_loop.set_postfix(
                 {
-                    "Loss": np.round(self.loss_avg_tracker["Total_Loss"].avg, 3),
+                    "Total Loss": np.round(self.loss_avg_tracker["Total_Loss"].avg, 3),
+                    "Sup. Loss": np.round(self.loss_avg_tracker["Supervised_Loss"].avg, 3),
+                    "Unsup. Loss": np.round(self.loss_avg_tracker["Unsupervised_Loss"].avg, 3),
                     "Dice": np.round(np.nanmean(binary_dice_scores), 3),
                     "Pred-Acc": np.round(self.batch_avg_tissue_acc.avg, 3),
                 }
@@ -271,8 +273,6 @@ class CellViTTrainer(BaseTrainer):
                     # no unlabeled data during the warmup period
                     unsup_loss = torch.tensor(0.0).cuda()
                     self.loss_avg_tracker["Unsupervised_Loss"].update(unsup_loss.detach().cpu().numpy())
-
-                    pseduo_high_ratio = torch.tensor(0.0).cuda()
                 else:
                     p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
                     with torch.no_grad():
@@ -297,13 +297,14 @@ class CellViTTrainer(BaseTrainer):
                     # calculate loss
                     sup_loss = self.calculate_sup_loss(predictions_l, gt)
 
-                    # 5. unsupervised loss
-                    unsup_loss, pseduo_high_ratio = self.compute_unsupervised_loss_by_threshold(
-                        predictions_u_strong, label_u_aug.detach(),
-                        logits_u_aug.detach(), thresh=p_threshold)
+                    # unsupervised loss
+                    unsup_loss, _ = self.compute_unsupervised_loss_by_threshold(predictions_u_strong["nuclei_type_map"],
+                                                                                label_u_aug.detach(),
+                                                                                logits_u_aug.detach(), thresh=p_threshold)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
                 total_loss = sup_loss + unsup_loss
+                self.loss_avg_tracker["Total_Loss"].update(total_loss.detach().cpu().numpy())
                 self.scaler.scale(total_loss).backward()
 
                 if (
@@ -691,7 +692,7 @@ class CellViTTrainer(BaseTrainer):
         Returns:
             torch.Tensor: Loss
         """
-        total_loss = 0
+        total_sup_loss = 0
         for branch, pred in predictions.items():
             if branch in [
                 "instance_map",
@@ -712,13 +713,13 @@ class CellViTTrainer(BaseTrainer):
                     )
                 else:
                     loss_value = loss_fn(input=pred, target=gt[branch])
-                total_loss = total_loss + weight * loss_value
+                total_sup_loss = total_sup_loss + weight * loss_value
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
-        self.loss_avg_tracker["Supervised_Loss"].update(total_loss.detach().cpu().numpy())
+        self.loss_avg_tracker["Supervised_Loss"].update(total_sup_loss.detach().cpu().numpy())
 
-        return total_loss
+        return total_sup_loss
 
     def calculate_step_metric_train(self, predictions: dict, gt: dict) -> dict:
         """Calculate the metrics for the training step
