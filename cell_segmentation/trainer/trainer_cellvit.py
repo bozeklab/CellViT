@@ -670,6 +670,8 @@ class CellViTTrainer(BaseTrainer):
         loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
         loss = loss.mean()
         self.loss_avg_tracker["Supervised_Loss"].update(loss.detach().cpu().numpy())
+        print('!!!')
+        print(loss)
         return loss, thresh_mask.float().mean()
 
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
