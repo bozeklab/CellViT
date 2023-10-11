@@ -260,6 +260,8 @@ class CellViTTrainer(BaseTrainer):
 
         if self.mixed_precision:
             with torch.autocast(device_type="cuda", dtype=torch.float16):
+                print('epoch!!!')
+                print(epoch)
                 if epoch < self.experiment_config["training"].get("sup_only_epoch", 0):
                     # make predictions
                     predictions_ = self.model.forward(imgs)
