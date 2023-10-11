@@ -423,7 +423,7 @@ class CellViTTrainer(BaseTrainer):
                 tissue_gt.append(batch_metrics["tissue_gt"])
                 val_loop.set_postfix(
                     {
-                        "Loss": np.round(self.loss_avg_tracker["Total_Loss"].avg, 3),
+                        "Loss": np.round(self.loss_avg_tracker["Supervised_Loss"].avg, 3),
                         "Dice": np.round(np.nanmean(binary_dice_scores), 3),
                         "Pred-Acc": np.round(self.batch_avg_tissue_acc.avg, 3),
                     }
@@ -441,7 +441,7 @@ class CellViTTrainer(BaseTrainer):
         )
 
         scalar_metrics = {
-            "Loss/Validation": self.loss_avg_tracker["Total_Loss"].avg,
+            "Loss/Validation": self.loss_avg_tracker["Supervised_Loss"].avg,
             "Binary-Cell-Dice-Mean/Validation": np.nanmean(binary_dice_scores),
             "Binary-Cell-Jacard-Mean/Validation": np.nanmean(binary_jaccard_scores),
             "Tissue-Multiclass-Accuracy/Validation": tissue_detection_accuracy,
