@@ -71,6 +71,7 @@ class CellViTTrainer(BaseTrainer):
     def __init__(
         self,
         model: CellViT,
+        model_teacher: CellViT,
         loss_fn_dict: dict,
         optimizer: Optimizer,
         scheduler: _LRScheduler,
@@ -99,6 +100,8 @@ class CellViTTrainer(BaseTrainer):
             log_images=log_images,
             mixed_precision=mixed_precision,
         )
+        self.model_teacher = model_teacher
+
         self.loss_fn_dict = loss_fn_dict
         self.num_classes = num_classes
         self.dataset_config = dataset_config
@@ -131,6 +134,7 @@ class CellViTTrainer(BaseTrainer):
                 * Image metrics
         """
         self.model.train()
+        self.model_teacher.eval()
         if epoch >= unfreeze_epoch:
             self.model.unfreeze_encoder()
 
@@ -158,6 +162,7 @@ class CellViTTrainer(BaseTrainer):
                 batch,
                 batch_idx,
                 len(train_dataloader),
+                epoch,
                 return_example_images=return_example_images,
             )
             if example_img is not None:
@@ -215,6 +220,7 @@ class CellViTTrainer(BaseTrainer):
         batch: object,
         batch_idx: int,
         num_batches: int,
+        epoch: int,
         return_example_images: bool,
     ) -> Tuple[dict, Union[plt.Figure, None]]:
         """Training step
@@ -232,24 +238,31 @@ class CellViTTrainer(BaseTrainer):
         """
         # unpack batch
         imgs = batch[0].to(self.device)  # imgs shape: (batch_size, 3, H, W)
-        masks = batch[
-            1
-        ]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
-        tissue_types = batch[2]  # list[str]
+        u_imgs = batch[1].to(self.device)
+        masks = batch[2]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
+        tissue_types = batch[3]  # list[str]
 
         if self.mixed_precision:
             with torch.autocast(device_type="cuda", dtype=torch.float16):
-                # make predictions
-                predictions_ = self.model.forward(imgs)
+                if epoch < self.experiment_config["training"].get("sup_only_epoch", 0):
+                    # make predictions
+                    predictions_ = self.model.forward(imgs)
 
-                # reshaping and postprocessing
-                predictions = self.unpack_predictions(predictions=predictions_)
-                gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+                    # reshaping and postprocessing
+                    predictions = self.unpack_predictions(predictions=predictions_)
+                    gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
-                # calculate loss
-                total_loss = self.calculate_loss(predictions, gt)
+                    # calculate loss
+                    sup_loss = self.calculate_sup_loss(predictions, gt)
+                    # no unlabeled data during the warmup period
+                    unsup_loss = torch.tensor(0.0).cuda()
+                    pseduo_high_ratio = torch.tensor(0.0).cuda()
 
-                # backward pass
+                    # backward pass
+
+                else:
+                    pass
+                total_loss = sup_loss + unsup_loss
                 self.scaler.scale(total_loss).backward()
 
                 if (
@@ -267,9 +280,9 @@ class CellViTTrainer(BaseTrainer):
             gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
             # calculate loss
-            total_loss = self.calculate_loss(predictions, gt)
+            total_sup_loss = self.calculate_sup_loss(predictions, gt)
 
-            total_loss.backward()
+            total_sup_loss.backward()
             if (
                 ((batch_idx + 1) % self.accum_iter == 0)
                 or ((batch_idx + 1) == num_batches)
@@ -457,7 +470,7 @@ class CellViTTrainer(BaseTrainer):
         gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
         # calculate loss
-        _ = self.calculate_loss(predictions, gt)
+        _ = self.calculate_sup_loss(predictions, gt)
 
         # get metrics for this batch
         batch_metrics = self.calculate_step_metric_validation(predictions, gt)
@@ -588,7 +601,7 @@ class CellViTTrainer(BaseTrainer):
         }
         return gt
 
-    def calculate_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
+    def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
         """Calculate the loss
 
         Args:

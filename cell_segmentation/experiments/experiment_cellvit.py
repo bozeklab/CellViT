@@ -161,6 +161,24 @@ class ExperimentCellViT(BaseExperiment):
         )
         model.to(device)
 
+        model_teacher = self.get_train_model(
+            pretrained_encoder=self.run_conf["model"].get("pretrained_encoder", None),
+            pretrained_model=self.run_conf["model"].get("pretrained", None),
+            backbone_type=self.run_conf["model"].get("backbone", "default"),
+            shared_skip_connections=self.run_conf["model"].get(
+                "shared_skip_connections", False
+            ),
+        )
+        model_teacher.to(device)
+
+        for p in model_teacher.parameters():
+            p.requires_grad = False
+
+        # initialize teacher model -- not neccesary if using warmup
+        with torch.no_grad():
+            for t_params, s_params in zip(model_teacher.parameters(), model.parameters()):
+                t_params.data = s_params.data
+
         # optimizer
         optimizer = self.get_optimizer(
             model,
@@ -225,6 +243,7 @@ class ExperimentCellViT(BaseExperiment):
         self.logger.info("Instantiate Trainer")
         trainer = CellViTTrainer(
             model=model,
+            model_teacher=model_teacher,
             loss_fn_dict=loss_fn_dict,
             optimizer=optimizer,
             scheduler=scheduler,
