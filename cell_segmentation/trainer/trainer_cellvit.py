@@ -166,7 +166,7 @@ class CellViTTrainer(BaseTrainer):
         for batch_idx, batch in train_loop:
             u_img = next(train_u_dataloader_iter)
             return_example_images = batch_idx == select_example_image
-            batch = batch[0], u_img, batch[1], batch[2]
+            batch = batch[0], u_img[0], batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
                 batch,
                 batch_idx,
