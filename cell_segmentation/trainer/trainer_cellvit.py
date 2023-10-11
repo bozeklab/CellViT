@@ -111,6 +111,8 @@ class CellViTTrainer(BaseTrainer):
         self.magnification = magnification
 
         # setup logging objects
+        self.loss_avg_tracker = {"Supervised_Loss": AverageMeter("Total_Loss", ":.4f")}
+        self.loss_avg_tracker = {"Unsupervised_Loss": AverageMeter("Total_Loss", ":.4f")}
         self.loss_avg_tracker = {"Total_Loss": AverageMeter("Total_Loss", ":.4f")}
         for branch, loss_fns in self.loss_fn_dict.items():
             for loss_name in loss_fns:
@@ -145,6 +147,8 @@ class CellViTTrainer(BaseTrainer):
         train_example_img = None
 
         # reset metrics
+        self.loss_avg_tracker["Supervised_Loss"].reset()
+        self.loss_avg_tracker["Unsupervised_Loss"].reset()
         self.loss_avg_tracker["Total_Loss"].reset()
         for branch, loss_fns in self.loss_fn_dict.items():
             for loss_name in loss_fns:
@@ -241,6 +245,7 @@ class CellViTTrainer(BaseTrainer):
         u_imgs = batch[1].to(self.device)
         masks = batch[2]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
         tissue_types = batch[3]  # list[str]
+        ema_decay_origin = self.experiment_config["model"]["ema_decay"]
 
         if self.mixed_precision:
             with torch.autocast(device_type="cuda", dtype=torch.float16):
@@ -256,12 +261,39 @@ class CellViTTrainer(BaseTrainer):
                     sup_loss = self.calculate_sup_loss(predictions, gt)
                     # no unlabeled data during the warmup period
                     unsup_loss = torch.tensor(0.0).cuda()
+                    self.loss_avg_tracker["Unsupervised_Loss"].update(unsup_loss.detach().cpu().numpy())
+
                     pseduo_high_ratio = torch.tensor(0.0).cuda()
-
-                    # backward pass
-
                 else:
-                    pass
+                    p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
+                    with torch.no_grad():
+                        self.model_teacher.eval()
+                        predictions_u_ = self.model_teacher.forward(u_imgs.detach())
+                        predictions_u = self.unpack_predictions(predictions=predictions_u_)
+
+                        # obtain pseudos
+                        logits_u_aug, label_u_aug = torch.max(predictions_u["nuclei_type_map"]["nuclei_type_map"], dim=1)
+
+                    num_labeled = len(imgs.shape[0])
+                    predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs), dim=0))
+
+                    predictions_l_ = predictions_all_[:num_labeled]
+                    predictions_u_strong_ = predictions_all_[num_labeled:]
+
+                    # reshaping and postprocessing
+                    predictions_l = self.unpack_predictions(predictions=predictions_l_)
+                    predictions_u_strong = self.unpack_predictions(predictions=predictions_u_strong_)
+                    gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+
+                    # calculate loss
+                    sup_loss = self.calculate_sup_loss(predictions_l, gt)
+
+                    # 5. unsupervised loss
+                    unsup_loss, pseduo_high_ratio = self.compute_unsupervised_loss_by_threshold(
+                        predictions_u_strong, label_u_aug.detach(),
+                        logits_u_aug.detach(), thresh=p_threshold)
+                    unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
+
                 total_loss = sup_loss + unsup_loss
                 self.scaler.scale(total_loss).backward()
 
@@ -274,6 +306,23 @@ class CellViTTrainer(BaseTrainer):
                     self.scaler.update()
                     self.optimizer.zero_grad(set_to_none=True)
                     self.model.zero_grad()
+
+                with torch.no_grad():
+                    if epoch > self.experiment_config["training"].get("sup_only_epoch", 0):
+                        ema_decay = min(1 - 1 / (batch_idx - len(loader_l) * self.experiment_config["training"].get("sup_only_epoch", 0)
+                                    + 1
+                            ),
+                            ema_decay_origin,
+                        )
+                    else:
+                        ema_decay = 0.0
+                    # update weight
+                    for param_train, param_eval in zip(self.model.parameters(), self.model_teacher.parameters()):
+                        param_eval.data = param_eval.data * ema_decay + param_train.data * (1 - ema_decay)
+                    # update bn
+                    for buffer_train, buffer_eval in zip(self.model.buffers(), self.model_teacher.buffers()):
+                        buffer_eval.data = buffer_eval.data * ema_decay + buffer_train.data * (1 - ema_decay)
+                        # buffer_eval.data = buffer_train.data
         else:
             predictions_ = self.model.forward(imgs)
             predictions = self.unpack_predictions(predictions=predictions_)
@@ -601,9 +650,18 @@ class CellViTTrainer(BaseTrainer):
         }
         return gt
 
+    def compute_unsupervised_loss_by_threshold(self, predict, target, logits, thresh=0.95):
+        batch_size, num_class, h, w = predict.shape
+        thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
+        target[~thresh_mask] = 255
+        loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
+        return loss.mean(), thresh_mask.float().mean()
+
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
         """Calculate the loss
+        self.loss_avg_tracker["Supervised_Loss"].update(total_loss.detach().cpu().numpy())
 
+        return total_loss
         Args:
             predictions (OrderedDict): OrderedDict: Processed network output. Keys are:
                 * nuclei_binary_map: Softmax output for binary nuclei prediction branch. Shape: (batch_size, H, W, 2)
@@ -649,7 +707,7 @@ class CellViTTrainer(BaseTrainer):
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
-        self.loss_avg_tracker["Total_Loss"].update(total_loss.detach().cpu().numpy())
+        self.loss_avg_tracker["Supervised_Loss"].update(total_loss.detach().cpu().numpy())
 
         return total_loss
 
