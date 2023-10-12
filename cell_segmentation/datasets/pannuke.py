@@ -381,11 +381,11 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         type_map = mask[()]["type_map"].astype(np.int32)
         mask = np.stack([inst_map, type_map], axis=-1)
 
-        transformed_weak = self.transforms_weak(image=img, mask=mask)
+        transformed_weak = self.transforms_weak(image=img)
         img_weak = transformed_weak["image"]
-        mask_weak = transformed_weak["mask"]
+        #mask_weak = transformed_weak["mask"]
 
-        transformed_strong = self.transforms_strong(image=img_weak, mask=mask_weak)
+        transformed_strong = self.transforms_strong(image=img_weak)
         img_str = transformed_strong["image"]
 
         img_weak = torch.Tensor(img_weak).type(torch.float32)
