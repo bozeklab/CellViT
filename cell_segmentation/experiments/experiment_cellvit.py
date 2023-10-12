@@ -779,6 +779,31 @@ class ExperimentCellViT(BaseExperiment):
                         hue=scale_color / 2,
                     )
                 )
+        if "Solarize".lower() in transform_settings:
+            p = transform_settings["solarize"]["p"]
+            threshold = transform_settings["solarize"]["threshold"]
+            transform_list.append(
+                A.Solarize(
+                    p=p,
+                    threshold=threshold
+                )
+            )
+        if "Posterize".lower() in transform_settings:
+            p = transform_settings["posterize"]["p"]
+            num_bits = transform_settings["posterize"].get("num_bits", (4, 8))
+            transform_list.append(
+                A.Posterize(
+                    p=p,
+                    num_bits=num_bits
+                )
+            )
+        if "Equalize".lower() in transform_settings:
+            p = transform_settings["equalize"]["p"]
+            transform_list.append(
+                A.Equalize(
+                    p=p,
+                )
+            )
         if "Superpixels".lower() in transform_settings:
             p = transform_settings["superpixels"]["p"]
             if p > 0 and p <= 1:

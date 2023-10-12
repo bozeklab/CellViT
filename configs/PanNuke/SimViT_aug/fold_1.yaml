@@ -149,14 +149,24 @@ transformations_weak:
     scale: 0.5
 transformations_strong:
   gaussnoise:
-    p: 0.25
+    p: 0.5
     var_limit: 50
   colorjitter:
-    p: 0.2
+    p: 0.5
     scale_setting: 0.25
     scale_color: 0.1
   blur:
-    p: 0.2
+    p: 0.5
     blur_limit: 10
+  solarize:
+    p: 0.5
+    threshold: 1
+  posterize:
+    p: 0.5
+    num_bits:
+      - 4
+      - 8
+  equalize:
+    p: 0.5
 
 eval_checkpoint: "latest_checkpoint.pth"
