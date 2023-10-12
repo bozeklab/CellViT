@@ -14,6 +14,7 @@ import sys
 
 import yaml
 
+from cell_segmentation.datasets.img_trnsf import build_basic_transfrom, strong_img_aug
 from models.encoders.VIT.sim_vit import SIMVisionTransformer
 from models.segmentation.cell_segmentation.sim_cellvit import SIMCellViT
 
@@ -229,8 +230,8 @@ class ExperimentCellViT(BaseExperiment):
             dataset_name=unlabeled_dataset_name,
             split="train",
             dataset_config=self.run_conf["data"],
-            transforms=train_weak_transforms,
-            transforms2=train_strong_transforms
+            transforms=build_basic_transfrom(),
+            transforms2=strong_img_aug(num_augs=3)
         )
 
         # load sampler

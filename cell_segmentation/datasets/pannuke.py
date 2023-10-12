@@ -21,6 +21,7 @@ from PIL import Image
 from scipy.ndimage import measurements
 
 from cell_segmentation.datasets.base_cell import CellDataset
+from cell_segmentation.datasets.img_trnsf import ToTensorAndNormalize
 from cell_segmentation.utils.tools import get_bounding_box
 
 logger = logging.getLogger()
@@ -375,30 +376,11 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         img_path = self.images[index]
         img = np.array(Image.open(img_path)).astype(np.uint8)
 
-        mask_path = self.masks[index]
-        mask = np.load(mask_path, allow_pickle=True)
-        inst_map = mask[()]["inst_map"].astype(np.int32)
-        type_map = mask[()]["type_map"].astype(np.int32)
-        #mask = np.stack([inst_map, type_map], axis=-1)
-
-        print(img)
-
-        transformed_weak = self.transforms_weak(image=img)
-        img_weak = transformed_weak["image"]
-        print(img_weak)
+        img_weak = self.transforms_weak(image=img)
         #mask_weak = transformed_weak["mask"]
+        img_str = self.transforms_strong(image=img_weak)
 
-        transformed_strong = self.transforms_strong(image=img_weak)
-        img_str = transformed_strong["image"]
-
-        img_weak = torch.Tensor(img_weak).type(torch.float32)
-        img_weak = img_weak.permute(2, 0, 1)
-        if torch.max(img_weak) >= 5:
-            img_weak = img_weak / 255
-
-        img_str = torch.Tensor(img_str).type(torch.float32)
-        img_str = img_str.permute(2, 0, 1)
-        if torch.max(img_str) >= 5:
-            img_str = img_str / 255
+        img_weak = ToTensorAndNormalize()(img_weak)
+        img_str = ToTensorAndNormalize()(img_str)
 
         return img_weak, img_str
