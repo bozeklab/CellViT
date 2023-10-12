@@ -164,9 +164,9 @@ class CellViTTrainer(BaseTrainer):
         train_loop = tqdm.tqdm(enumerate(train_dataloader), total=len(train_dataloader))
 
         for batch_idx, batch in train_loop:
-            u_img_strong, u_img_weak = next(train_u_dataloader_iter)
+            u_img_weak, u_img_strong = next(train_u_dataloader_iter)
             return_example_images = batch_idx == select_example_image
-            batch = batch[0], u_img_strong, u_img_weak, batch[1], batch[2]
+            batch = batch[0], u_img_weak, u_img_strong, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
                 batch,
                 batch_idx,
@@ -252,8 +252,8 @@ class CellViTTrainer(BaseTrainer):
         """
         # unpack batch
         imgs = batch[0].to(self.device)  # imgs shape: (batch_size, 3, H, W)
-        u_imgs_strong = batch[1].to(self.device)
-        u_imgs_weak = batch[2].to(self.device)
+        u_imgs_weak = batch[1].to(self.device)
+        u_imgs_strong = batch[2].to(self.device)
         masks = batch[3]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
         tissue_types = batch[4]  # list[str]
         ema_decay_origin = self.experiment_config["model"]["ema_decay"]
