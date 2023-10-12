@@ -383,6 +383,7 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
 
         transformed_weak = self.transforms_weak(image=img)
         img_weak = transformed_weak["image"]
+        print(img_weak)
         #mask_weak = transformed_weak["mask"]
 
         transformed_strong = self.transforms_strong(image=img_weak)
