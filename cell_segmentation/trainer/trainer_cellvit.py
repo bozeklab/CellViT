@@ -281,7 +281,8 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
 
                         # obtain pseudos
-                        logits_u_aug, label_u_aug = torch.max(predictions_u["nuclei_type_map"], dim=1)
+                        logits_nuc_u_aug, label_nuc_u_aug = torch.max(predictions_u["nuclei_type_map"], dim=1)
+                        logits_bin_u_aug, label_bin_u_aug = torch.max(predictions_u["nuclei_binary_map"], dim=1)
 
                     num_labeled = imgs.shape[0]
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
@@ -303,8 +304,11 @@ class CellViTTrainer(BaseTrainer):
                     # unsupervised loss
                     unsup_loss, _ = self.compute_unsupervised_loss_by_threshold(predictions_u_strong["nuclei_type_map"],
                                                                                 predictions_u_strong["nuclei_binary_map"],
-                                                                                label_u_aug.detach(),
-                                                                                logits_u_aug.detach(), thresh=p_threshold)
+                                                                                label_nuc_u_aug.detach(),
+                                                                                label_bin_u_aug.detach(),
+                                                                                logits_nuc_u_aug.detach(),
+                                                                                logits_bin_u_aug.detach(),
+                                                                                thresh=p_threshold)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
                 total_loss = sup_loss + unsup_loss
@@ -667,17 +671,22 @@ class CellViTTrainer(BaseTrainer):
         }
         return gt
 
-    def compute_unsupervised_loss_by_threshold(self, type_map, binary_map, target, logits, thresh=0.95):
+    def compute_unsupervised_loss_by_threshold(self, type_map, binary_map, target_type, target_bin,
+                                               logits_type, logits_bin, thresh=0.95):
         #batch_size, num_class, h, w = predict.shape
-        thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
-        target[~thresh_mask] = 255
-        loss_type = F.cross_entropy(type_map, target, ignore_index=255, reduction="none")
+        type_thresh_mask = logits_type.ge(thresh).bool() * (target_type != 255).bool()
+        target_type[~type_thresh_mask] = 255
+
+        bin_thresh_mask = logits_bin.ge(thresh).bool() * (target_bin != 255).bool()
+        target_bin[~bin_thresh_mask] = 255
+
+        loss_type = F.cross_entropy(type_map, target_type, ignore_index=255, reduction="none")
         loss_type = loss_type.mean()
-        loss_binary = F.cross_entropy(binary_map, target, ignore_index=255, reduction="none")
+        loss_binary = F.cross_entropy(binary_map, target_bin, ignore_index=255, reduction="none")
         loss_binary = loss_binary.mean()
         loss = loss_type + loss_binary
         self.loss_avg_tracker["Unsupervised_Loss"].update(loss.detach().cpu().numpy())
-        return loss, thresh_mask.float().mean()
+        return loss, type_thresh_mask.float().mean()
 
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
         """Calculate the loss
