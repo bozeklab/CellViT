@@ -388,4 +388,14 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         transformed_strong = self.transforms_strong(image=img_weak, mask=mask_weak)
         img_str = transformed_strong["image"]
 
+        img_weak = torch.Tensor(img_weak).type(torch.float32)
+        img_weak = img_weak.permute(2, 0, 1)
+        if torch.max(img_weak) >= 5:
+            img_weak = img_weak / 255
+
+        img_str = torch.Tensor(img_str).type(torch.float32)
+        img_str = img_str.permute(2, 0, 1)
+        if torch.max(img_str) >= 5:
+            img_str = img_str / 255
+
         return img_weak, img_str
