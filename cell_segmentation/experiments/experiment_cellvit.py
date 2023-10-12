@@ -208,15 +208,6 @@ class ExperimentCellViT(BaseExperiment):
             input_shape=self.run_conf["data"].get("input_shape", 256),
         )
 
-        train_strong_transforms, _ = self.get_transforms(
-            self.run_conf["transformations_strong"],
-            input_shape=self.run_conf["data"].get("input_shape", 256),
-        )
-
-        train_weak_transforms, _ = self.get_transforms(
-            self.run_conf["transformations_weak"],
-            input_shape=self.run_conf["data"].get("input_shape", 256),
-        )
 
         dataset_name = self.run_conf["data"]["dataset"]
         unlabeled_dataset_name = self.run_conf["data"]["dataset_unlabeled"]
