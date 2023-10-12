@@ -674,6 +674,7 @@ class CellViTTrainer(BaseTrainer):
     def compute_unsupervised_loss_by_threshold(self, type_map, binary_map, target_type, target_bin,
                                                logits_type, logits_bin, thresh=0.95):
         #batch_size, num_class, h, w = predict.shape
+        print(logits_type)
         type_thresh_mask = logits_type.ge(thresh).bool() * (target_type != 255).bool()
         target_type[~type_thresh_mask] = 255
 
