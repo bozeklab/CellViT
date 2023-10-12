@@ -379,7 +379,7 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         mask = np.load(mask_path, allow_pickle=True)
         inst_map = mask[()]["inst_map"].astype(np.int32)
         type_map = mask[()]["type_map"].astype(np.int32)
-        mask = np.stack([inst_map, type_map], axis=-1)
+        #mask = np.stack([inst_map, type_map], axis=-1)
 
         print(img)
 
