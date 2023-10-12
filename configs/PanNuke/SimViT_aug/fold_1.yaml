@@ -152,11 +152,11 @@ transformations_strong:
   solarize:
     p: 0.5
     threshold: 1
-  posterize:
-    p: 0.5
-    num_bits:
-      - 4
-      - 8
+  #posterize:
+  #  p: 0.5
+  #  num_bits:
+  #    - 4
+  #    - 8
   equalize:
     p: 0.5
   normalize:
