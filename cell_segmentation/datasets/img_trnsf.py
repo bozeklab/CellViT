@@ -305,10 +305,10 @@ class strong_img_aug:
 
 def build_basic_transfrom(mean=[0.5, 0.5, 0.5]):
     trs_form = []
-    trs_form.append(Resize([256, 256], ratio_range=[1, 1]))
     trs_form.append(RandomFlip(prob=0.5, flag_hflip=True))
     crop_size = (170, 170)
     trs_form.append(Crop(crop_size, crop_type='rand', mean=mean, ignore_value=True))
+    trs_form.append(Resize([256, 256], ratio_range=[1, 1]))
 
     return Compose(trs_form)
 
@@ -328,6 +328,8 @@ def apply_transformations(input_image_path):
 
     strong = strong_img_aug(num_augs=3)
     transformed_image = strong(transformed_image)
+
+    print(transformed_image.size)
 
     # Display the original and transformed images for comparison
     plt.figure(figsize=(10, 5))
