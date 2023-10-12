@@ -124,15 +124,6 @@ transformations:
     p: 0.1
   elastictransform:
     p: 0.2
-  normalize:
-    mean:
-    - 0.5
-    - 0.5
-    - 0.5
-    std:
-    - 0.5
-    - 0.5
-    - 0.5
 transformations_weak:
   randomsizedcrop:
     p: 0.1
@@ -168,5 +159,14 @@ transformations_strong:
       - 8
   equalize:
     p: 0.5
+  normalize:
+    mean:
+      - 0.5
+      - 0.5
+      - 0.5
+    std:
+      - 0.5
+      - 0.5
+      - 0.5
 
 eval_checkpoint: "latest_checkpoint.pth"

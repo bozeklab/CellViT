@@ -516,7 +516,6 @@ class ExperimentCellViT(BaseExperiment):
         dataset_name: str,
         train_transforms: Callable = None,
         val_transforms: Callable = None,
-        only_train = False
     ) -> Tuple[Dataset, Dataset]:
         """Retrieve training dataset and validation dataset
 
