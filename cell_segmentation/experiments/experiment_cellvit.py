@@ -207,22 +207,30 @@ class ExperimentCellViT(BaseExperiment):
             input_shape=self.run_conf["data"].get("input_shape", 256),
         )
 
-        train_u_transforms, _ = self.get_transforms(
+        train_strong_transforms, _ = self.get_transforms(
             self.run_conf["transformations_strong"],
             input_shape=self.run_conf["data"].get("input_shape", 256),
         )
 
+        train_weak_transforms, _ = self.get_transforms(
+            self.run_conf["transformations_weak"],
+            input_shape=self.run_conf["data"].get("input_shape", 256),
+        )
+
         dataset_name = self.run_conf["data"]["dataset"]
+        unlabeled_dataset_name = self.run_conf["data"]["dataset_unlabeled"]
         train_dataset, val_dataset = self.get_datasets(
             dataset_name=dataset_name,
             train_transforms=train_transforms,
             val_transforms=val_transforms,
         )
 
-        train_u_dataset, _ = self.get_datasets(
-            dataset_name=dataset_name,
-            train_transforms=train_u_transforms,
-            val_transforms=val_transforms,
+        train_u_dataset = select_dataset(
+            dataset_name=unlabeled_dataset_name,
+            split="train",
+            dataset_config=self.run_conf["data"],
+            transforms=train_weak_transforms,
+            transforms2=train_strong_transforms
         )
 
         # load sampler
@@ -249,7 +257,7 @@ class ExperimentCellViT(BaseExperiment):
         )
 
         train_u_dataloader = DataLoader(
-            train_dataset,
+            train_u_dataset,
             batch_size=self.run_conf["training"]["batch_size"],
             sampler=training_u_sampler,
             num_workers=16,
@@ -508,6 +516,7 @@ class ExperimentCellViT(BaseExperiment):
         dataset_name: str,
         train_transforms: Callable = None,
         val_transforms: Callable = None,
+        only_train = False
     ) -> Tuple[Dataset, Dataset]:
         """Retrieve training dataset and validation dataset
 
@@ -529,6 +538,7 @@ class ExperimentCellViT(BaseExperiment):
             dataset_config=self.run_conf["data"],
             transforms=train_transforms,
         )
+
         if "val_split" in self.run_conf["data"]:
             generator_split = torch.Generator().manual_seed(
                 self.default_conf["random_seed"]

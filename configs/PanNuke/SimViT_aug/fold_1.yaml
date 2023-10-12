@@ -27,6 +27,8 @@ data:
   - 2
   num_nuclei_classes: 6
   num_tissue_classes: 19
+  dataset_unlabeled: PanNukeUnlabeled
+  dataset_path_unlabeled: /data/pwojcik/SimMIM/pannuke
 
 model:
   ema_decay: 0.996
@@ -131,6 +133,20 @@ transformations:
     - 0.5
     - 0.5
     - 0.5
+transformations_weak:
+  randomsizedcrop:
+    p: 0.1
+  elastictransform:
+    p: 0.2
+  randomrotate90:
+    p: 0.5
+  horizontalflip:
+    p: 0.5
+  verticalflip:
+    p: 0.5
+  downscale:
+    p: 0.15
+    scale: 0.5
 transformations_strong:
   gaussnoise:
     p: 0.25

@@ -350,3 +350,42 @@ class PanNukeDataset(CellDataset):
     #         inst_map[remapped_ids > 1] = remapped_ids[remapped_ids > 1]
     #         current_max_id = np.amax(inst_map)
     #     return inst_map
+
+
+class PanNukeDatasetUnlabelled(PanNukeDataset):
+    def __init__(self, dataset_path, folds,
+                 transforms_strong,
+                 transforms_weak) -> None:
+        super().__init__(dataset_path, folds)
+        self.transforms_strong = transforms_strong
+        self.transforms_weak = transforms_weak
+
+        logger.info(f"Created Pannuke Unlabeled Dataset by using fold(s) {self.folds}")
+        logger.info(f"Resulting dataset length: {self.__len__()}")
+
+    def __getitem__(self, index: int):
+        """Get one dataset item consisting of transformed image,
+        masks (instance_map, nuclei_type_map, nuclei_binary_map, hv_map) and tissue type as string
+
+        Args:
+            index (int): Index of element to retrieve
+
+
+        """
+        img_path = self.images[index]
+        img = np.array(Image.open(img_path)).astype(np.uint8)
+
+        mask_path = self.masks[index]
+        mask = np.load(mask_path, allow_pickle=True)
+        inst_map = mask[()]["inst_map"].astype(np.int32)
+        type_map = mask[()]["type_map"].astype(np.int32)
+        mask = np.stack([inst_map, type_map], axis=-1)
+
+        transformed_weak = self.transforms_weak(image=img, mask=mask)
+        img_weak = transformed_weak["image"]
+        mask_weak = transformed_weak["mask"]
+
+        transformed_strong = self.transforms_strong(image=img_weak, mask=mask_weak)
+        img_str = transformed_weak["image"]
+
+        return img_weak, img_str

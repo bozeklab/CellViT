@@ -186,7 +186,6 @@ class CellViTTrainer(BaseTrainer):
             tissue_gt.append(batch_metrics["tissue_gt"])
             train_loop.set_postfix(
                 {
-                    "Total Loss": np.round(self.loss_avg_tracker["Total_Loss"].avg, 3),
                     "Sup. Loss": np.round(self.loss_avg_tracker["Supervised_Loss"].avg, 3),
                     "Unsup. Loss": np.round(self.loss_avg_tracker["Unsupervised_Loss"].avg, 3),
                     "Dice": np.round(np.nanmean(binary_dice_scores), 3),

@@ -12,8 +12,14 @@ from torch.utils.data import Dataset
 from cell_segmentation.datasets.pannuke import PanNukeDataset
 
 
+class PanNukeDatasetUnlabeled:
+    pass
+
+
 def select_dataset(
-    dataset_name: str, split: str, dataset_config: dict, transforms: Callable = None
+    dataset_name: str, split: str, dataset_config: dict,
+        transforms: Callable = None,
+        transforms2: Callable = None,
 ) -> Dataset:
     """Select a cell segmentation dataset from the provided ones, currently just PanNuke is implemented here
 
@@ -49,6 +55,14 @@ def select_dataset(
             dataset_path=dataset_config["dataset_path"],
             folds=folds,
             transforms=transforms,
+        )
+    elif dataset_name.lower() == "pannukeunlabeled":
+        folds = dataset_config["train_folds"]
+        dataset = PanNukeDatasetUnlabeled(
+            dataset_path=dataset_config["dataset_path"],
+            folds=folds,
+            transforms_weak=transforms,
+            transforms_strong=transforms2
         )
     else:
         raise NotImplementedError(f"Unknown dataset: {dataset_name}")
