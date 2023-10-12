@@ -755,6 +755,15 @@ class ExperimentCellViT(BaseExperiment):
                 transform_list.append(
                     A.Downscale(p=p, scale_max=scale, scale_min=scale)
                 )
+        if "Posterize".lower() in transform_settings:
+            p = transform_settings["posterize"]["p"]
+            num_bits = transform_settings["posterize"].get("num_bits", (4, 8))
+            transform_list.append(
+                A.Posterize(
+                    p=p,
+                    num_bits=num_bits
+                )
+            )
         if "Blur".lower() in transform_settings:
             p = transform_settings["blur"]["p"]
             blur_limit = transform_settings["blur"]["blur_limit"]
@@ -786,15 +795,6 @@ class ExperimentCellViT(BaseExperiment):
                 A.Solarize(
                     p=p,
                     threshold=threshold
-                )
-            )
-        if "Posterize".lower() in transform_settings:
-            p = transform_settings["posterize"]["p"]
-            num_bits = transform_settings["posterize"].get("num_bits", (4, 8))
-            transform_list.append(
-                A.Posterize(
-                    p=p,
-                    num_bits=num_bits
                 )
             )
         if "Equalize".lower() in transform_settings:
