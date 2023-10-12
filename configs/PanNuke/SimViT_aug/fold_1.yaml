@@ -135,9 +135,9 @@ transformations_weak:
     p: 0.5
   verticalflip:
     p: 0.5
-  downscale:
-    p: 0.15
-    scale: 0.5
+  #downscale:
+  #  p: 0.15
+  #  scale: 0.5
 transformations_strong:
   gaussnoise:
     p: 0.5
