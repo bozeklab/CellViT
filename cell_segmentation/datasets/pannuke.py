@@ -374,7 +374,7 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
 
         """
         img_path = self.images[index]
-        img = np.array(Image.open(img_path)).astype(np.uint8)
+        img = Image.open(img_path)
 
         img_weak = self.transforms_weak(image=img)
         #mask_weak = transformed_weak["mask"]

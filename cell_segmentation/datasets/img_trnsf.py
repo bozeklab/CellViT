@@ -326,6 +326,9 @@ def apply_transformations(input_image_path):
     example_image.show(title="Original Image")
     transformed_image = transform_pipeline(example_image)
 
+    strong = strong_img_aug(num_augs=3)
+    transformed_image = strong(transformed_image)
+
     # Display the original and transformed images for comparison
     plt.figure(figsize=(10, 5))
     plt.subplot(1, 2, 1)
