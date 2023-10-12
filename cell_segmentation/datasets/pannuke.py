@@ -381,6 +381,8 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         type_map = mask[()]["type_map"].astype(np.int32)
         mask = np.stack([inst_map, type_map], axis=-1)
 
+        print(img)
+
         transformed_weak = self.transforms_weak(image=img)
         img_weak = transformed_weak["image"]
         print(img_weak)
