@@ -386,6 +386,6 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         mask_weak = transformed_weak["mask"]
 
         transformed_strong = self.transforms_strong(image=img_weak, mask=mask_weak)
-        img_str = transformed_weak["image"]
+        img_str = transformed_strong["image"]
 
         return img_weak, img_str

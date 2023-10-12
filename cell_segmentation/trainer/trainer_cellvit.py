@@ -253,7 +253,7 @@ class CellViTTrainer(BaseTrainer):
         # unpack batch
         imgs = batch[0].to(self.device)  # imgs shape: (batch_size, 3, H, W)
         u_imgs_strong = batch[1].to(self.device)
-        u_images_weak = batch[2].to(self.device)
+        u_imgs_weak = batch[2].to(self.device)
         masks = batch[3]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
         tissue_types = batch[4]  # list[str]
         ema_decay_origin = self.experiment_config["model"]["ema_decay"]
@@ -277,7 +277,7 @@ class CellViTTrainer(BaseTrainer):
                     p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
                     with torch.no_grad():
                         self.model_teacher.eval()
-                        predictions_u_ = self.model_teacher.forward(u_images_weak.detach())
+                        predictions_u_ = self.model_teacher.forward(u_imgs_weak.detach())
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
 
                         # obtain pseudos
