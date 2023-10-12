@@ -164,9 +164,9 @@ class CellViTTrainer(BaseTrainer):
         train_loop = tqdm.tqdm(enumerate(train_dataloader), total=len(train_dataloader))
 
         for batch_idx, batch in train_loop:
-            u_img = next(train_u_dataloader_iter)
+            u_img_strong, u_img_weak = next(train_u_dataloader_iter)
             return_example_images = batch_idx == select_example_image
-            batch = batch[0], u_img[0], batch[1], batch[2]
+            batch = batch[0], u_img_strong, u_img_weak, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
                 batch,
                 batch_idx,
@@ -252,9 +252,10 @@ class CellViTTrainer(BaseTrainer):
         """
         # unpack batch
         imgs = batch[0].to(self.device)  # imgs shape: (batch_size, 3, H, W)
-        u_imgs = batch[1].to(self.device)
-        masks = batch[2]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
-        tissue_types = batch[3]  # list[str]
+        u_imgs_strong = batch[1].to(self.device)
+        u_images_weak = batch[2].to(self.device)
+        masks = batch[3]  # dict: keys: "instance_map", "nuclei_map", "nuclei_binary_map", "hv_map"
+        tissue_types = batch[4]  # list[str]
         ema_decay_origin = self.experiment_config["model"]["ema_decay"]
 
         if self.mixed_precision:
@@ -276,14 +277,14 @@ class CellViTTrainer(BaseTrainer):
                     p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
                     with torch.no_grad():
                         self.model_teacher.eval()
-                        predictions_u_ = self.model_teacher.forward(u_imgs.detach())
+                        predictions_u_ = self.model_teacher.forward(u_images_weak.detach())
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
 
                         # obtain pseudos
                         logits_u_aug, label_u_aug = torch.max(predictions_u["nuclei_type_map"], dim=1)
 
                     num_labeled = imgs.shape[0]
-                    predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs), dim=0))
+                    predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
 
                     predictions_l_ = {}
                     predictions_u_strong_ = {}

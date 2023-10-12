@@ -9,11 +9,7 @@ from typing import Callable
 
 from torch.utils.data import Dataset
 
-from cell_segmentation.datasets.pannuke import PanNukeDataset
-
-
-class PanNukeDatasetUnlabeled:
-    pass
+from cell_segmentation.datasets.pannuke import PanNukeDataset, PanNukeDatasetUnlabelled
 
 
 def select_dataset(
@@ -58,7 +54,7 @@ def select_dataset(
         )
     elif dataset_name.lower() == "pannukeunlabeled":
         folds = dataset_config["train_folds"]
-        dataset = PanNukeDatasetUnlabeled(
+        dataset = PanNukeDatasetUnlabelled(
             dataset_path=dataset_config["dataset_path"],
             folds=folds,
             transforms_weak=transforms,
