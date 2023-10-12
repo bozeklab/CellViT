@@ -302,6 +302,7 @@ class CellViTTrainer(BaseTrainer):
 
                     # unsupervised loss
                     unsup_loss, _ = self.compute_unsupervised_loss_by_threshold(predictions_u_strong["nuclei_type_map"],
+                                                                                predictions_u_strong["nuclei_binary_map"],
                                                                                 label_u_aug.detach(),
                                                                                 logits_u_aug.detach(), thresh=p_threshold)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
@@ -666,12 +667,15 @@ class CellViTTrainer(BaseTrainer):
         }
         return gt
 
-    def compute_unsupervised_loss_by_threshold(self, predict, target, logits, thresh=0.95):
+    def compute_unsupervised_loss_by_threshold(self, type_map, binary_map, target, logits, thresh=0.95):
         #batch_size, num_class, h, w = predict.shape
         thresh_mask = logits.ge(thresh).bool() * (target != 255).bool()
         target[~thresh_mask] = 255
-        loss = F.cross_entropy(predict, target, ignore_index=255, reduction="none")
-        loss = loss.mean()
+        loss_type = F.cross_entropy(type_map, target, ignore_index=255, reduction="none")
+        loss_type = loss_type.mean()
+        loss_binary = F.cross_entropy(binary_map, target, ignore_index=255, reduction="none")
+        loss_binary = loss_binary.mean()
+        loss = loss_type + loss_binary
         self.loss_avg_tracker["Unsupervised_Loss"].update(loss.detach().cpu().numpy())
         return loss, thresh_mask.float().mean()
 
