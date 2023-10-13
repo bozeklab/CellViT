@@ -683,7 +683,7 @@ class CellViTTrainer(BaseTrainer):
             print('__!!!__')
             print(branch)
             branch_loss_fns = self.loss_fn_dict[branch]
-            print(gt[branch])
+            #print(gt[branch])
             for loss_name, loss_setting in branch_loss_fns.items():
                 loss_fn = loss_setting["loss_fn"]
                 weight = loss_setting["weight"]
