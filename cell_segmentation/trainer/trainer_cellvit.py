@@ -672,6 +672,8 @@ class CellViTTrainer(BaseTrainer):
     def compute_unsupervised_loss(self, predictions, gt):
         total_sup_loss = 0
         for branch, pred in predictions.items():
+            print('branch')
+            print(branch)
             if branch in [
                 "instance_map",
                 "instance_types",
