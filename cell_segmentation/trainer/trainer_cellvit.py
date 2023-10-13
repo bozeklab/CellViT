@@ -283,6 +283,7 @@ class CellViTTrainer(BaseTrainer):
                         # obtain pseudos
                         predictions_u["nuclei_type_map"], _ = torch.max(predictions_u["nuclei_type_map"], dim=1)
                         predictions_u["nuclei_binary_map"], _ = torch.max(predictions_u["nuclei_binary_map"], dim=1)
+                        print(predictions_u["nuclei_binary_map"])
                         predictions_u["tissue_types"], _ = torch.max(predictions_u["tissue_types"], dim=1)
 
                     num_labeled = imgs.shape[0]
@@ -680,8 +681,6 @@ class CellViTTrainer(BaseTrainer):
                 "instance_types_nuclei",
             ]:  # TODO: rather select branch from loss functions?
                 continue
-            print('__!!!__')
-            print(branch)
             branch_loss_fns = self.loss_fn_dict[branch]
             #print(gt[branch])
             for loss_name, loss_setting in branch_loss_fns.items():
@@ -696,8 +695,6 @@ class CellViTTrainer(BaseTrainer):
                     )
                 else:
                     loss_value = loss_fn(input=pred, target=gt[branch])
-                print('!!!')
-                print(branch)
                 total_sup_loss = total_sup_loss + weight * loss_value
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
