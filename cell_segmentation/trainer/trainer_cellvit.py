@@ -274,7 +274,7 @@ class CellViTTrainer(BaseTrainer):
                     unsup_loss = torch.tensor(0.0).cuda()
                     self.loss_avg_tracker["Unsupervised_Loss"].update(unsup_loss.detach().cpu().numpy())
                 else:
-                    p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
+                    #p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
                     with torch.no_grad():
                         self.model_teacher.eval()
                         predictions_u_ = self.model_teacher.forward(u_imgs_weak.detach())
@@ -678,9 +678,9 @@ class CellViTTrainer(BaseTrainer):
                 "instance_types_nuclei",
             ]:  # TODO: rather select branch from loss functions?
                 continue
-            branch_loss_fns = self.loss_fn_dict[branch]
             print('__!!!__')
             print(branch)
+            branch_loss_fns = self.loss_fn_dict[branch]
             print(gt[branch])
             for loss_name, loss_setting in branch_loss_fns.items():
                 loss_fn = loss_setting["loss_fn"]
