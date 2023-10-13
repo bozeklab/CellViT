@@ -281,9 +281,9 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
 
                         # obtain pseudos
-                        predictions_u["nuclei_type_map"] = torch.max(predictions_u["nuclei_type_map"])
-                        predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"])
-                        predictions_u["tissue_types"] = torch.max(predictions_u["tissue_types"])
+                        predictions_u["nuclei_type_map"], _ = torch.max(predictions_u["nuclei_type_map"], dim=1)
+                        predictions_u["nuclei_binary_map"], _ = torch.max(predictions_u["nuclei_binary_map"], dim=1)
+                        predictions_u["tissue_types"], _ = torch.max(predictions_u["tissue_types"], dim=1)
 
                     num_labeled = imgs.shape[0]
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
