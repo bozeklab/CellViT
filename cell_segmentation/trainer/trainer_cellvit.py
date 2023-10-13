@@ -679,6 +679,8 @@ class CellViTTrainer(BaseTrainer):
             ]:  # TODO: rather select branch from loss functions?
                 continue
             branch_loss_fns = self.loss_fn_dict[branch]
+            print('__!!!__')
+            print(branch)
             for loss_name, loss_setting in branch_loss_fns.items():
                 loss_fn = loss_setting["loss_fn"]
                 weight = loss_setting["weight"]
