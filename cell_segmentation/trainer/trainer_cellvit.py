@@ -283,6 +283,7 @@ class CellViTTrainer(BaseTrainer):
                         # obtain pseudos
                         predictions_u["nuclei_type_map"] = torch.max(predictions_u["nuclei_type_map"])
                         predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"])
+                        predictions_u["tissue_types"] = torch.max(predictions_u["tissue_types"])
 
                     num_labeled = imgs.shape[0]
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
@@ -322,11 +323,13 @@ class CellViTTrainer(BaseTrainer):
 
                 with torch.no_grad():
                     if epoch > self.experiment_config["training"].get("sup_only_epoch", 0):
-                        ema_decay = min(1 - 1 / (batch_idx - num_batches * self.experiment_config["training"].get("sup_only_epoch", 0)
-                                    + 1
+                        ema_decay = min(1 - 1 / (batch_idx -
+                                                 num_batches * self.experiment_config["training"].get("sup_only_epoch", 0)+ 1
                             ),
                             ema_decay_origin,
                         )
+                        print('ema_decay')
+                        print(ema_decay)
                     else:
                         ema_decay = 0.0
                     # update weight
