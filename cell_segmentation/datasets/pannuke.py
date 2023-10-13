@@ -377,7 +377,6 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         img = Image.open(img_path)
 
         img_weak = self.transforms_weak(image=img)
-        #mask_weak = transformed_weak["mask"]
         img_str = self.transforms_strong(img_weak)
 
         img_weak = ToTensorAndNormalize()(img_weak)
