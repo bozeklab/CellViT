@@ -285,6 +285,15 @@ class CellViTTrainer(BaseTrainer):
                         _, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
                         _, predictions_u["tissue_types"] = torch.max(predictions_u["tissue_types"], dim=1)
 
+                    for branch, pred in predictions_u.items():
+                        if branch in [
+                            "instance_map",
+                            "instance_types",
+                            "instance_types_nuclei",
+                        ]:  # TODO: rather select branch from loss functions?
+                            continue
+                        print(branch)
+
                     num_labeled = imgs.shape[0]
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
 
