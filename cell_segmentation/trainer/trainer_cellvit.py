@@ -672,8 +672,6 @@ class CellViTTrainer(BaseTrainer):
     def compute_unsupervised_loss(self, predictions, gt):
         total_sup_loss = 0
         for branch, pred in predictions.items():
-            print('branch')
-            print(branch)
             if branch in [
                 "instance_map",
                 "instance_types",
@@ -694,6 +692,8 @@ class CellViTTrainer(BaseTrainer):
                     )
                 else:
                     loss_value = loss_fn(input=pred, target=gt[branch])
+                print('branch')
+                print(branch)
                 total_sup_loss = total_sup_loss + weight * loss_value
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
