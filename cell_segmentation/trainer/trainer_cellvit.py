@@ -285,6 +285,8 @@ class CellViTTrainer(BaseTrainer):
                         _, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
                         _, predictions_u["tissue_types"] = torch.max(predictions_u["tissue_types"], dim=1)
 
+                        print(predictions_u["hv_map"].shape)
+
                     for branch, pred in predictions_u.items():
                         if branch in [
                             "instance_map",
