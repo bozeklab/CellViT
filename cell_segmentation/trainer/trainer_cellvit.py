@@ -286,7 +286,7 @@ class CellViTTrainer(BaseTrainer):
                                                                      num_classes=self.num_classes).type(torch.float32)
                         _, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
                         predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
-                                                                     num_classes=self.num_classes).type(torch.float32)
+                                                                     num_classes=2).type(torch.float32)
 
                     for branch, pred in predictions_u.items():
                         if branch in [
