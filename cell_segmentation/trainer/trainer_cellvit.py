@@ -290,7 +290,7 @@ class CellViTTrainer(BaseTrainer):
 
                         print('!!!')
                         print(predictions_u["tissue_types"].shape)
-                        gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+                        #gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
                         print(gt["tissue_types"].shape)
 
                     for branch, pred in predictions_u.items():
@@ -314,7 +314,7 @@ class CellViTTrainer(BaseTrainer):
                     # reshaping and postprocessing
                     predictions = self.unpack_predictions(predictions=predictions_l_)
                     predictions_u_strong = self.unpack_predictions(predictions=predictions_u_strong_)
-                    gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+                    #gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
                     # calculate loss
                     sup_loss = self.calculate_sup_loss(predictions, gt)
