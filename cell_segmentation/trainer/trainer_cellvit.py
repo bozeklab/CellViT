@@ -288,11 +288,6 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
                                                                      num_classes=2).type(torch.float32)
 
-                        print('!!!')
-                        print(predictions_u["tissue_types"].shape)
-                        #gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
-                        #print(gt["tissue_types"].shape)
-
                     for branch, pred in predictions_u.items():
                         if branch in [
                             "instance_map",
@@ -314,15 +309,14 @@ class CellViTTrainer(BaseTrainer):
                     # reshaping and postprocessing
                     predictions = self.unpack_predictions(predictions=predictions_l_)
                     predictions_u_strong = self.unpack_predictions(predictions=predictions_u_strong_)
-                    #gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+                    gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
 
                     # calculate loss
                     sup_loss = self.calculate_sup_loss(predictions, gt)
 
                     # unsupervised loss
-                    unsup_loss = sup_loss.clone()
-                    #unsup_loss, _ = self.compute_unsupervised_loss(predictions_u_strong,
-                                                                   #predictions_u)
+                    unsup_loss, _ = self.compute_unsupervised_loss(predictions_u_strong,
+                                                                   predictions_u)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
                 total_loss = sup_loss + unsup_loss
@@ -694,6 +688,7 @@ class CellViTTrainer(BaseTrainer):
         for branch, pred in predictions.items():
             if branch in [
                 "instance_map",
+                "tissue_types",
                 "instance_types",
                 "instance_types_nuclei",
             ]:  # TODO: rather select branch from loss functions?
