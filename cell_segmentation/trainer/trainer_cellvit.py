@@ -282,7 +282,11 @@ class CellViTTrainer(BaseTrainer):
 
                         # obtain pseudos
                         _, predictions_u["nuclei_type_map"] = torch.max(predictions_u["nuclei_type_map"], dim=1)
+                        predictions_u["nuclei_type_map"] = F.one_hot(predictions_u["nuclei_type_map"],
+                                                                     num_classes=self.num_classes).type(torch.float32)
                         _, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
+                        predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
+                                                                     num_classes=self.num_classes).type(torch.float32)
 
                     for branch, pred in predictions_u.items():
                         if branch in [
@@ -306,12 +310,6 @@ class CellViTTrainer(BaseTrainer):
                     predictions = self.unpack_predictions(predictions=predictions_l_)
                     predictions_u_strong = self.unpack_predictions(predictions=predictions_u_strong_)
                     gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
-
-                    #print(predictions_u["nuclei_type_map"].shape)
-                    #print(predictions_u["nuclei_binary_map"].shape)
-                    #print(predictions_u["tissue_types"].shape)
-                    #print(predictions_u["hv_map"].shape)
-                    #print(predictions["hv_map"].shape)
 
                     # calculate loss
                     sup_loss = self.calculate_sup_loss(predictions, gt)
