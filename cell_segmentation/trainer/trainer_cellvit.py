@@ -288,6 +288,11 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
                                                                      num_classes=2).type(torch.float32)
 
+                        print('!!!')
+                        print(predictions_u["tissue_types"].shape)
+                        gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
+                        print(gt["tissue_types"].shape)
+
                     for branch, pred in predictions_u.items():
                         if branch in [
                             "instance_map",
