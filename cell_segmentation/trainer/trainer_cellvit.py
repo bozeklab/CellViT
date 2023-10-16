@@ -701,6 +701,8 @@ class CellViTTrainer(BaseTrainer):
                 print('!!!')
                 print(loss_value)
                 total_unsup_loss = total_unsup_loss + weight * loss_value
+                print('!!!!!')
+                print(total_unsup_loss)
                 self.loss_avg_tracker[f"unsupervised_{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
