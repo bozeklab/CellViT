@@ -699,7 +699,7 @@ class CellViTTrainer(BaseTrainer):
                 else:
                     loss_value = loss_fn(input=pred, target=gt[branch])
                 print('!!!')
-                print(weight * loss_value)
+                print(weight, loss_value, weight * loss_value)
                 total_unsup_loss = total_unsup_loss + weight * loss_value
                 print('!!!!!')
                 print(total_unsup_loss)
