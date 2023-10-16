@@ -281,12 +281,12 @@ class CellViTTrainer(BaseTrainer):
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
 
                         # obtain pseudos
-                        _, predictions_u["nuclei_type_map"] = torch.max(predictions_u["nuclei_type_map"], dim=1)
-                        predictions_u["nuclei_type_map"] = F.one_hot(predictions_u["nuclei_type_map"],
-                                                                     num_classes=self.num_classes).type(torch.float32)
-                        _, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
-                        predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
-                                                                       num_classes=2).type(torch.float32)
+                        #_, predictions_u["nuclei_type_map"] = torch.max(predictions_u["nuclei_type_map"], dim=1)
+                        #predictions_u["nuclei_type_map"] = F.one_hot(predictions_u["nuclei_type_map"],
+                        #                                             num_classes=self.num_classes).type(torch.float32)
+                        #_, predictions_u["nuclei_binary_map"] = torch.max(predictions_u["nuclei_binary_map"], dim=1)
+                        #predictions_u["nuclei_binary_map"] = F.one_hot(predictions_u["nuclei_binary_map"],
+                        #                                               num_classes=2).type(torch.float32)
 
                     num_labeled = imgs.shape[0]
                     print(imgs.shape)
