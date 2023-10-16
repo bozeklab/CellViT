@@ -120,7 +120,7 @@ class CellViTTrainer(BaseTrainer):
                     f"{branch}_{loss_name}", ":.4f"
                 )
                 self.loss_avg_tracker[f"unsupervised_{branch}_{loss_name}"] = AverageMeter(
-                    f"{branch}_{loss_name}", ":.4f"
+                    f"unsupervised_{branch}_{loss_name}", ":.4f"
                 )
         self.batch_avg_tissue_acc = AverageMeter("Batch_avg_tissue_ACC", ":4.f")
 
