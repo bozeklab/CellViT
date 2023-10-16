@@ -73,7 +73,7 @@ training:
   mixed_precision: 1
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: 25
+  sup_only_epoch: 0
   batch_size: 16
   epochs: 130
   optimizer: AdamW
@@ -94,7 +94,7 @@ training:
   unsupervised:
     flag_extra_weak: False
     threshold: 0.95   # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ params1: 0.7, 0.75, 0.8, 0.85, 0.9, 0.95
-    loss_weight: 1.0
+    loss_weight: 2.0
 
 transformations:
   randomrotate90:
@@ -124,40 +124,5 @@ transformations:
     p: 0.1
   elastictransform:
     p: 0.2
-transformations_weak:
-  randomsizedcrop:
-    p: 0.1
-  #elastictransform:
-  #  p: 0.2
-  #randomrotate90:
-  #  p: 0.5
-  horizontalflip:
-    p: 0.5
-  verticalflip:
-    p: 0.5
-  #downscale:
-  #  p: 0.15
-  #  scale: 0.5
-transformations_strong:
-  gaussnoise:
-    p: 0.5
-    var_limit: 50
-  colorjitter:
-    p: 0.5
-    scale_setting: 0.25
-    scale_color: 0.1
-  blur:
-    p: 0.5
-    blur_limit: 10
-  solarize:
-    p: 0.5
-    threshold: 1
-  posterize:
-    p: 0.5
-    num_bits:
-      - 4
-      - 8
-  equalize:
-    p: 0.5
 
 eval_checkpoint: "latest_checkpoint.pth"

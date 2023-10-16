@@ -156,6 +156,7 @@ class CellViTTrainer(BaseTrainer):
         for branch, loss_fns in self.loss_fn_dict.items():
             for loss_name in loss_fns:
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].reset()
+                self.loss_avg_tracker[f"unsupervised_{branch}_{loss_name}"].reset()
         self.batch_avg_tissue_acc.reset()
 
         # randomly select a batch that should be displayed
@@ -309,7 +310,7 @@ class CellViTTrainer(BaseTrainer):
                     # unsupervised loss
 
                     unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,
-                                                                   predictions_u)
+                                                                predictions_u)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
                 total_loss = sup_loss + unsup_loss
@@ -333,8 +334,6 @@ class CellViTTrainer(BaseTrainer):
                             ),
                             ema_decay_origin,
                         )
-                        print('ema_decay')
-                        print(ema_decay)
                     else:
                         ema_decay = 0.0
                     # update weight
@@ -348,8 +347,6 @@ class CellViTTrainer(BaseTrainer):
             predictions_ = self.model.forward(imgs)
             predictions = self.unpack_predictions(predictions=predictions_)
             gt = self.unpack_masks(masks=masks, tissue_types=tissue_types)
-            print('!!----!!')
-            print(gt["tissue_types"].shape)
 
             # calculate loss
             total_sup_loss = self.calculate_sup_loss(predictions, gt)
@@ -681,13 +678,11 @@ class CellViTTrainer(BaseTrainer):
         for branch, pred in predictions.items():
             if branch in [
                 "instance_map",
-                "tissue_types",
                 "instance_types",
                 "instance_types_nuclei",
             ]:  # TODO: rather select branch from loss functions?
                 continue
             branch_loss_fns = self.loss_fn_dict[branch]
-            #print(gt[branch])
             for loss_name, loss_setting in branch_loss_fns.items():
                 loss_fn = loss_setting["loss_fn"]
                 weight = loss_setting["weight"]
@@ -703,7 +698,7 @@ class CellViTTrainer(BaseTrainer):
                 #print('branch')
                 #print(branch)
                 total_unsup_loss = total_unsup_loss + weight * loss_value
-                self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
+                self.loss_avg_tracker[f"unsupervised_{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
         self.loss_avg_tracker["Unsupervised_Loss"].update(total_unsup_loss.detach().cpu().numpy())
