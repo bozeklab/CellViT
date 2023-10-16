@@ -5,7 +5,7 @@ logging:
   log_comment: SIMCellViT_1600_skin_50-Fold-1
   tags:
   - "Fold-1"
-  - "SIMCellViT_1600_skin_35unfreeze"
+  - "SIMCellViT_1600_skin_usupervised"
   wandb_dir: ./results
   log_dir: ./results/PanNuke/SIMCellViT_1600_skin_50
   level: Debug
