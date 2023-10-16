@@ -308,9 +308,8 @@ class CellViTTrainer(BaseTrainer):
 
                     # unsupervised loss
 
-                    unsup_loss = sup_loss.clone()
-                    #unsup_loss, _ = self.compute_unsupervised_loss(predictions_u_strong,
-                    #                                               predictions_u)
+                    unsup_loss, _ = self.compute_unsupervised_loss(predictions_u_strong,
+                                                                   predictions_u)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
                 total_loss = sup_loss + unsup_loss
