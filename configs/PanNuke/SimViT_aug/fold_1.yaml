@@ -88,7 +88,7 @@ training:
     - 0.95
     lr: 0.0003
     weight_decay: 0.0001
-  unfreeze_epoch: 0
+  unfreeze_epoch: 1
   sampling_gamma: 0.85
   sampling_strategy: cell+tissue
   unsupervised:
