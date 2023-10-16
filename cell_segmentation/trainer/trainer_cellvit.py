@@ -308,7 +308,7 @@ class CellViTTrainer(BaseTrainer):
 
                     # unsupervised loss
 
-                    unsup_loss, _ = self.compute_unsupervised_loss(predictions_u_strong,
+                    unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,
                                                                    predictions_u)
                     unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
 
@@ -677,7 +677,7 @@ class CellViTTrainer(BaseTrainer):
         return gt
 
     def compute_unsupervised_loss(self, predictions, gt):
-        total_sup_loss = 0
+        total_unsup_loss = 0
         for branch, pred in predictions.items():
             if branch in [
                 "instance_map",
@@ -702,12 +702,12 @@ class CellViTTrainer(BaseTrainer):
                     loss_value = loss_fn(input=pred, target=gt[branch])
                 #print('branch')
                 #print(branch)
-                total_sup_loss = total_sup_loss + weight * loss_value
+                total_unsup_loss = total_unsup_loss + weight * loss_value
                 self.loss_avg_tracker[f"{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
-        self.loss_avg_tracker["Unsupervised_Loss"].update(total_sup_loss.detach().cpu().numpy())
-        return total_sup_loss
+        self.loss_avg_tracker["Unsupervised_Loss"].update(total_unsup_loss.detach().cpu().numpy())
+        return total_unsup_loss
 
     def calculate_sup_loss(self, predictions: OrderedDict, gt: dict) -> torch.Tensor:
         """Calculate the loss
