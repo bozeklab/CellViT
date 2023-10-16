@@ -682,6 +682,7 @@ class CellViTTrainer(BaseTrainer):
             if branch in [
                 "instance_map",
                 "instance_types",
+                "tissue_types",
                 "instance_types_nuclei",
             ]:  # TODO: rather select branch from loss functions?
                 continue
@@ -698,11 +699,7 @@ class CellViTTrainer(BaseTrainer):
                     )
                 else:
                     loss_value = loss_fn(input=pred, target=gt[branch])
-                print('!!!')
-                print(weight, loss_value, weight * loss_value)
                 total_unsup_loss = total_unsup_loss + weight * loss_value
-                print('!!!!!')
-                print(total_unsup_loss)
                 self.loss_avg_tracker[f"unsupervised_{branch}_{loss_name}"].update(
                     loss_value.detach().cpu().numpy()
                 )
