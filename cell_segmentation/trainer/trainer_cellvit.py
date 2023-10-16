@@ -289,6 +289,8 @@ class CellViTTrainer(BaseTrainer):
                                                                        num_classes=2).type(torch.float32)
 
                     num_labeled = imgs.shape[0]
+                    print(imgs.shape)
+                    print(u_imgs_strong.shape)
                     predictions_all_ = self.model.forward(torch.cat((imgs, u_imgs_strong), dim=0))
 
                     predictions_l_ = {}
