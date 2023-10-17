@@ -2,9 +2,9 @@ logging:
   mode: online
   project: # Adapt
   notes: SIMCellViTSemiSupervised
-  log_comment: SIMCellViT_1600_skin_50_semi-Fold-2
+  log_comment: SIMCellViT_1600_skin_50_semi-Fold-3
   tags:
-  - "Fold-2"
+  - "Fold-3"
   - "SIMCellViT_1600_skin_usupervised"
   wandb_dir: ./results
   log_dir: ./results/PanNuke/SIMCellViT_1600_skin_50_semi
@@ -21,10 +21,10 @@ data:
   dataset: PanNuke
   dataset_path: /data/pwojcik/SimMIM/pannuke
   train_folds:
-  - 1
   - 2
-  val_folds:
   - 3
+  val_folds:
+  - 1
   num_nuclei_classes: 6
   num_tissue_classes: 19
   dataset_unlabeled: PanNukeUnlabeled
