@@ -79,10 +79,7 @@ class PanNukeDataset(CellDataset):
             }  # careful - should all be named differently
 
         logger.info(f"Created Pannuke Dataset by using fold(s) {self.folds}")
-        print('!!!!')
-        print(f"Created Pannuke Dataset by using fold(s) {self.folds}")
         logger.info(f"Resulting dataset length: {self.__len__()}")
-        print(f"Resulting dataset length: {self.__len__()}")
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, dict, str, str]:
         """Get one dataset item consisting of transformed image,
