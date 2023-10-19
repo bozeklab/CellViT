@@ -27,6 +27,7 @@ from torchmetrics.functional.classification import binary_jaccard_index
 
 from base_ml.base_early_stopping import EarlyStopping
 from base_ml.base_trainer import BaseTrainer
+from cell_segmentation.experiments.cons_weigths import ConsistencyWeight
 from cell_segmentation.utils.metrics import get_fast_pq, remap_label
 from cell_segmentation.utils.tools import cropping_center
 from models.segmentation.cell_segmentation.cellvit import CellViT
@@ -262,6 +263,8 @@ class CellViTTrainer(BaseTrainer):
         tissue_types = batch[4]  # list[str]
         ema_decay_origin = self.experiment_config["model"]["ema_decay"]
 
+        consistency_weight = ConsistencyWeight(2.5, 131)
+
         if self.mixed_precision:
             with torch.autocast(device_type="cuda", dtype=torch.float16):
                 if epoch < self.experiment_config["training"].get("sup_only_epoch", 0):
@@ -314,7 +317,9 @@ class CellViTTrainer(BaseTrainer):
 
                     unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,
                                                                 predictions_u)
-                    unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
+                    #unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
+                    weight = consistency_weight(epoch - 24)
+                    unsup_loss *= weight
 
                 total_loss = sup_loss + unsup_loss
                 self.loss_avg_tracker["Total_Loss"].update(total_loss.detach().cpu().numpy())
