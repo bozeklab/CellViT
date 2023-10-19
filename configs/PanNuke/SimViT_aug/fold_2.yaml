@@ -73,7 +73,7 @@ training:
   mixed_precision: 1
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: 25
+  sup_only_epoch: 0
   batch_size: 16
   epochs: 130
   optimizer: AdamW
@@ -88,13 +88,13 @@ training:
     - 0.95
     lr: 0.0003
     weight_decay: 0.0001
-  unfreeze_epoch: 25
+  unfreeze_epoch: 0
   sampling_gamma: 0.85
   sampling_strategy: cell+tissue
   unsupervised:
     flag_extra_weak: False
     threshold: 0.95   # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ params1: 0.7, 0.75, 0.8, 0.85, 0.9, 0.95
-    loss_weight: 1.0
+    loss_weight: 2.0
 
 transformations:
   randomrotate90:
