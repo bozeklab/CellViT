@@ -179,12 +179,13 @@ class BaseTrainer:
             if self.log_images:
                 wandb.log(train_image_metrics, step=epoch + 1)
             # validation epoch
-            (
-                val_scalar_metrics,
-                val_image_metrics,
-                early_stopping_metric,
-            ) = self.validation_epoch(epoch, val_dataloader)
-            wandb.log(val_scalar_metrics, step=epoch + 1)
+            if epoch >= 25:
+                (
+                    val_scalar_metrics,
+                    val_image_metrics,
+                    early_stopping_metric,
+                ) = self.validation_epoch(epoch, val_dataloader)
+                wandb.log(val_scalar_metrics, step=epoch + 1)
             if self.log_images:
                 wandb.log(val_image_metrics, step=epoch + 1)
 
