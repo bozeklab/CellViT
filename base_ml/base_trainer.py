@@ -172,6 +172,8 @@ class BaseTrainer:
         for epoch in range(self.start_epoch, epochs):
             # training epoch
             self.logger.info(f"Epoch: {epoch+1}/{epochs}")
+            print('!!!')
+            print(epoch, epoch % 5)
             train_scalar_metrics, train_image_metrics = self.train_epoch(
                 epoch, train_dataloader, train_u_dataloader, **kwargs
             )
@@ -179,8 +181,7 @@ class BaseTrainer:
             if self.log_images:
                 wandb.log(train_image_metrics, step=epoch + 1)
             # validation epoch
-            print(epoch, epoch % 5)
-            if (epoch >= 25) and (epoch % 5 == 0):
+            if ((epoch >= 25) and (epoch % 5 == 0)):
                 (
                     val_scalar_metrics,
                     val_image_metrics,
