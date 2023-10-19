@@ -199,17 +199,17 @@ class BaseTrainer:
             )
 
             # early stopping
-            if self.early_stopping is not None:
-                best_model = self.early_stopping(early_stopping_metric, epoch)
-                if best_model:
-                    self.logger.info("New best model - save checkpoint")
-                    self.save_checkpoint(epoch, "model_best.pth")
-                elif self.early_stopping.early_stop:
-                    self.logger.info("Performing early stopping!")
-                    break
-            if epoch % 25 == 0:
-                self.save_checkpoint(epoch, f"checkpoint_{epoch}.pth")
-            self.save_checkpoint(epoch, "latest_checkpoint.pth")
+            #if self.early_stopping is not None:
+            #    best_model = self.early_stopping(early_stopping_metric, epoch)
+            #    if best_model:
+            #        self.logger.info("New best model - save checkpoint")
+            #        self.save_checkpoint(epoch, "model_best.pth")
+            #    elif self.early_stopping.early_stop:
+            #        self.logger.info("Performing early stopping!")
+            #        break
+            #if epoch % 25 == 0:
+            #    self.save_checkpoint(epoch, f"checkpoint_{epoch}.pth")
+            #self.save_checkpoint(epoch, "latest_checkpoint.pth")
 
             # scheduling
             self.scheduler.step()
