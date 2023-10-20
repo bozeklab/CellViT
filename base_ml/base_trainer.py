@@ -172,8 +172,6 @@ class BaseTrainer:
         for epoch in range(self.start_epoch, epochs):
             # training epoch
             self.logger.info(f"Epoch: {epoch+1}/{epochs}")
-            print('!!!')
-            print(epoch, epoch % 5)
             train_scalar_metrics, train_image_metrics = self.train_epoch(
                 epoch, train_dataloader, train_u_dataloader, **kwargs
             )

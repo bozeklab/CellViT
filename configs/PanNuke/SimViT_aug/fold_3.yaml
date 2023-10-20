@@ -21,7 +21,6 @@ data:
   dataset: PanNuke
   dataset_path: /data/pwojcik/SimMIM/pannuke
   train_folds:
-  - 2
   - 3
   val_folds:
   - 1
