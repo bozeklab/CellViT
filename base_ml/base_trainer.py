@@ -179,7 +179,7 @@ class BaseTrainer:
             if self.log_images:
                 wandb.log(train_image_metrics, step=epoch + 1)
             # validation epoch
-            if ((epoch >= 25) and (epoch % 5 == 0)):
+            if ((epoch >= 25) and (epoch % 5 == 0)) or (epoch >= 125):
                 (
                     val_scalar_metrics,
                     val_image_metrics,

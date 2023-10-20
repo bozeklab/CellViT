@@ -23,7 +23,7 @@ data:
   train_folds:
   - 3
   val_folds:
-  - 2
+  - 1
   num_nuclei_classes: 6
   num_tissue_classes: 19
   dataset_unlabeled: PanNukeUnlabeled
