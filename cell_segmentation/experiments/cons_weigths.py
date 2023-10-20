@@ -34,7 +34,7 @@ def main():
     consistency_weights = []
     for epoch in range(25, max_epoch + 1):
         consistency_weight = ConsistencyWeight(max_weight, max_epoch, ramp='sigmoid')
-        weight = consistency_weight(epoch - 24)
+        weight = consistency_weight(epoch )
         consistency_weights.append(weight)
         print(epoch, weight)
 

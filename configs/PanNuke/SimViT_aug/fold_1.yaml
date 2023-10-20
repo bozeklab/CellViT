@@ -22,9 +22,8 @@ data:
   dataset_path: /data/pwojcik/SimMIM/pannuke
   train_folds:
   - 1
-  - 3
   val_folds:
-  - 2
+  - 3
   num_nuclei_classes: 6
   num_tissue_classes: 19
   dataset_unlabeled: PanNukeUnlabeled
