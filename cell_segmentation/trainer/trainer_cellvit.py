@@ -8,6 +8,7 @@
 import logging
 from collections import OrderedDict
 from pathlib import Path
+import wandb
 from typing import Tuple, Union
 
 import numpy as np
@@ -293,6 +294,11 @@ class CellViTTrainer(BaseTrainer):
                                                    num_classes=self.num_classes).type(torch.float32)
                         predictions_u["nuclei_type_map"] = nuclei_type_one_hot
                         _, nuclei_binary_map = torch.max(predictions_u["nuclei_binary_map"], dim=-1)
+                        nbm = wandb.Image(
+                            nuclei_binary_map[:2, :],
+                            caption="Teacher binary mask"
+                        )
+                        wandb.log({"teacher_bm": nbm})
                         nuclei_binary_map_one_hot = F.one_hot(nuclei_binary_map, num_classes=2).type(torch.float32)
                         predictions_u["nuclei_binary_map"] = nuclei_binary_map_one_hot
 
