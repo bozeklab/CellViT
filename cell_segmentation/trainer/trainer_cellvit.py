@@ -296,7 +296,7 @@ class CellViTTrainer(BaseTrainer):
                         _, nuclei_binary_map = torch.max(predictions_u["nuclei_binary_map"], dim=-1)
                         print(nuclei_binary_map[:2, :].detach().cpu().numpy())
                         nbm = wandb.Image(
-                            nuclei_binary_map[:2, :].detach().cpu().numpy().int(),
+                            nuclei_binary_map[:2, :].detach().cpu().numpy().astype(int),
                             caption="Teacher binary mask"
                         )
                         wandb.log({"teacher_bm": nbm})
