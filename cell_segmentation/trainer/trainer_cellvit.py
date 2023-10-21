@@ -298,6 +298,7 @@ class CellViTTrainer(BaseTrainer):
                             nuclei_binary_map[:2, :],
                             caption="Teacher binary mask"
                         )
+                        print(nbm)
                         wandb.log({"teacher_bm": nbm})
                         nuclei_binary_map_one_hot = F.one_hot(nuclei_binary_map, num_classes=2).type(torch.float32)
                         predictions_u["nuclei_binary_map"] = nuclei_binary_map_one_hot
