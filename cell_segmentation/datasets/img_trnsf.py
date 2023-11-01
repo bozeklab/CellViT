@@ -329,7 +329,7 @@ def apply_transformations(input_image_path):
     strong = strong_img_aug(num_augs=3)
     transformed_image = strong(transformed_image)
 
-    print(transformed_image.size)
+    #print(transformed_image.size)
 
     # Display the original and transformed images for comparison
     plt.figure(figsize=(10, 5))
