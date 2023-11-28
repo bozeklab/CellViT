@@ -1,15 +1,15 @@
 logging:
   mode: online
   project: # Adapt
-  notes: SIMCellViT_pn13
-  log_comment: SIMCellViT_pn13_1600-Fold-1
+  notes: SIMCellViTSemiSupervised
+  log_comment: SIMCellViT_1600_pn13_50_semi-Fold-1
   tags:
   - "Fold-1"
-  - "SIMCellViT_1600_pn13_attn"
+  - "SIMCellViT_1600_pn13_usupervised"
   wandb_dir: ./results
-  log_dir: ./results/PanNuke/SIMCellViT_pn13_1600_attn
+  log_dir: ./results/PanNuke/SIMCellViT_1600_pn13_attn_semi
   level: Debug
-  group: SIMCellViT_pn13_attn
+  group: SIMCellViT_semi_supervised_attn
 
 random_seed: 19
 
@@ -27,8 +27,11 @@ data:
   - 2
   num_nuclei_classes: 6
   num_tissue_classes: 19
+  dataset_unlabeled: PanNukeUnlabeled
+  dataset_path_unlabeled: /data/pwojcik/SimMIM/pannuke
 
 model:
+  ema_decay: 0.996
   backbone: SimViT
   pretrained_encoder: /data/pwojcik/SimMIM/pannuke_voc_attn/checkpoint-latest.pth # Adapt to your path
   shared_skip_connections: true
@@ -67,8 +70,10 @@ loss:
 
 training:
   drop_rate: 0
+  mixed_precision: 1
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
+  sup_only_epoch: 0
   batch_size: 16
   epochs: 75
   optimizer: AdamW
@@ -86,6 +91,10 @@ training:
   unfreeze_epoch: 25
   sampling_gamma: 0.85
   sampling_strategy: cell+tissue
+  unsupervised:
+    flag_extra_weak: False
+    threshold: 0.95   # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ params1: 0.7, 0.75, 0.8, 0.85, 0.9, 0.95
+    loss_weight: 1.0
 
 transformations:
   randomrotate90:
