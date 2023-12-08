@@ -72,9 +72,9 @@ training:
   mixed_precision: 1
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: 0
+  sup_only_epoch: 130
   batch_size: 16
-  epochs: 130
+  epochs: 70
   optimizer: AdamW
   early_stopping_patience: 130
   scheduler:
