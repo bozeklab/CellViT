@@ -179,7 +179,9 @@ class BaseTrainer:
             if self.log_images:
                 wandb.log(train_image_metrics, step=epoch + 1)
             # validation epoch
-            if ((epoch >= 25) and (epoch % 5 == 0)) or (epoch >= 125):
+            sup_only_epoch = self.experiment_config["training"].get("sup_only_epoch", 0)
+            validation_frequency = self.experiment_config["training"].get("sup_only_epoch", 0)
+            if ((epoch >= sup_only_epoch) and (epoch % validation_frequency == 0)) or (epoch == epochs - 1):
                 (
                     val_scalar_metrics,
                     val_image_metrics,
