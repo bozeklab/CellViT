@@ -180,7 +180,7 @@ class BaseTrainer:
                 wandb.log(train_image_metrics, step=epoch + 1)
             # validation epoch
             sup_only_epoch = self.experiment_config["training"].get("sup_only_epoch", 0)
-            validation_frequency = self.experiment_config["training"].get("sup_only_epoch", 0)
+            validation_frequency = self.experiment_config["training"].get("validation_frequency", 1)
             if ((epoch >= sup_only_epoch) and (epoch % validation_frequency == 0)) or (epoch == epochs - 1):
                 (
                     val_scalar_metrics,

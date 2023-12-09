@@ -75,7 +75,7 @@ training:
   drop_path_rate: 0.1
   sup_only_epoch: 25
   batch_size: 16
-  epochs: 70
+  epochs: 75
   optimizer: AdamW
   early_stopping_patience: 130
   scheduler:
