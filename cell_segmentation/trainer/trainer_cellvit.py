@@ -172,6 +172,8 @@ class CellViTTrainer(BaseTrainer):
         for batch_idx, batch in train_loop:
             u_img_weak, u_img_strong = next(train_u_dataloader_iter)
             return_example_images = batch_idx == select_example_image
+            print('!!!!')
+            print(batch[0])
             batch = batch[0], u_img_weak, u_img_strong, batch[1], batch[2]
             batch_metrics, example_img = self.train_step(
                 batch,

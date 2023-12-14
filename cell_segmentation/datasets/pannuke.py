@@ -111,8 +111,6 @@ class PanNukeDataset(CellDataset):
         mask = np.stack([inst_map, type_map], axis=-1)
 
         if self.transforms is not None:
-            print('!!!')
-            print('transforms')
             transformed = self.transforms(image=img, mask=mask)
             img = transformed["image"]
             mask = transformed["mask"]
