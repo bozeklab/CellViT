@@ -826,6 +826,8 @@ class ExperimentCellViT(BaseExperiment):
                     )
                 )
         if "ElasticTransform".lower() in transform_settings.keys():
+            print('!!!!')
+            print('elastic')
             p = transform_settings["elastictransform"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(
