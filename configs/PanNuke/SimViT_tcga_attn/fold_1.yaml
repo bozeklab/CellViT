@@ -99,7 +99,7 @@ training:
 
 transformations:
   randomrotate90:
-    p: 0.1
+    p: 1.0
   horizontalflip:
     p: 0.1
   verticalflip:
@@ -118,7 +118,7 @@ transformations:
     scale_setting: 0.25
     scale_color: 0.1
   superpixels:
-    p: 0.1
+    p: 1.0
   zoomblur:
     p: 0.1
   randomsizedcrop:
