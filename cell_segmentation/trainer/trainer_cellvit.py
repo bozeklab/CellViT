@@ -294,6 +294,16 @@ class CellViTTrainer(BaseTrainer):
                         self.model_teacher.eval()
                         predictions_u_ = self.model_teacher.forward(u_imgs_weak.detach())
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
+
+                        if return_example_images:
+                            predictions_u_vis = {"nuclei_type_map": predictions_u["nuclei_type_map"].clone(),
+                                                 "nuclei_binary_map": predictions_u["nuclei_binary_map"].clone(),
+                                                 "hv_map": predictions_u["hv_map"].clone()}
+
+                            predictions_u_vis["nuclei_binary_map"] = torch.argmax(predictions_u_vis["nuclei_binary_map"], dim=-1).type(
+                                torch.uint8
+                            )
+
                         # obtain pseudos
                         _, nuclei_type_map = torch.max(predictions_u["nuclei_type_map"], dim=-1)
                         nuclei_type_one_hot = F.one_hot(nuclei_type_map, num_classes=self.num_classes).type(torch.float32)
@@ -377,16 +387,19 @@ class CellViTTrainer(BaseTrainer):
         batch_metrics = self.calculate_step_metric_train(predictions, gt)
 
         if return_example_images:
-            print('!!!!')
-            print(gt["nuclei_binary_map"].shape)
             return_example_images = self.generate_example_image(
                 imgs, predictions, gt, num_images=4, num_nuclei_classes=self.num_classes
             )
             if unsupervised:
-                print('!!!!!')
-                print(predictions_u["nuclei_binary_map"].shape)
+                predictions_u["nuclei_binary_map"] = torch.argmax(predictions_u["nuclei_binary_map"], dim=-1).type(
+                    torch.uint8
+                )
+                predictions_u["instance_types_nuclei"] = (
+                    predictions_u["instance_types_nuclei"].detach().cpu().numpy().astype("int32")
+                )
+
                 return_example_images_usup = self.generate_example_image(
-                    u_imgs_weak, predictions_u_strong, predictions_u, num_images=4, num_nuclei_classes=self.num_classes,
+                    u_imgs_weak, predictions_u_strong, predictions_u_vis, num_images=4, num_nuclei_classes=self.num_classes,
                     imgs2=u_imgs_strong
                 )
             else:
