@@ -74,7 +74,7 @@ training:
   validation_frequency: 5
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: -1
+  sup_only_epoch: 25
   batch_size: 16
   epochs: 130
   optimizer: AdamW
