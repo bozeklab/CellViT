@@ -299,12 +299,6 @@ class CellViTTrainer(BaseTrainer):
                         nuclei_type_one_hot = F.one_hot(nuclei_type_map, num_classes=self.num_classes).type(torch.float32)
                         predictions_u["nuclei_type_map"] = nuclei_type_one_hot
                         _, nuclei_binary_map = torch.max(predictions_u["nuclei_binary_map"], dim=-1)
-                        #print(nuclei_binary_map[:2, :].detach().cpu().numpy())
-                        #nbm = wandb.Image(
-                        #    nuclei_binary_map[0, :].detach().cpu().numpy().astype(int),
-                        #    caption="Teacher binary mask"
-                        #)
-                        #wandb.log({"teacher_bm": nbm})
                         nuclei_binary_map_one_hot = F.one_hot(nuclei_binary_map, num_classes=2).type(torch.float32)
                         predictions_u["nuclei_binary_map"] = nuclei_binary_map_one_hot
 
@@ -383,12 +377,16 @@ class CellViTTrainer(BaseTrainer):
         batch_metrics = self.calculate_step_metric_train(predictions, gt)
 
         if return_example_images:
+            print('!!!!')
+            print(gt["nuclei_binary_map"].shape)
             return_example_images = self.generate_example_image(
                 imgs, predictions, gt, num_images=4, num_nuclei_classes=self.num_classes
             )
             if unsupervised:
+                print('!!!!!')
+                print(predictions_u["nuclei_binary_map"].shape)
                 return_example_images_usup = self.generate_example_image(
-                    u_imgs_weak, predictions_u_strong,  predictions_u, num_images=4, num_nuclei_classes=self.num_classes,
+                    u_imgs_weak, predictions_u_strong, predictions_u, num_images=4, num_nuclei_classes=self.num_classes,
                     imgs2=u_imgs_strong
                 )
             else:
@@ -1058,9 +1056,6 @@ class CellViTTrainer(BaseTrainer):
         gt_sample_binary_map = (
             ground_truth["nuclei_binary_map"][sample_indices].detach().cpu().numpy()
         )
-
-        print('!!!')
-        print(gt_sample_binary_map.shape)
 
         gt_sample_hv_map = ground_truth["hv_map"][sample_indices].detach().cpu().numpy()
         gt_sample_instance_map = (
