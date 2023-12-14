@@ -181,7 +181,7 @@ class CellViTTrainer(BaseTrainer):
                 return_example_images=return_example_images,
             )
             if example_img is not None:
-                train_example_img = example_img
+                train_example_img, unsup_train_example_img = example_img
             binary_dice_scores = (
                 binary_dice_scores + batch_metrics["binary_dice_scores"]
             )
@@ -231,7 +231,11 @@ class CellViTTrainer(BaseTrainer):
             f"Tissue-MC-Acc.: {tissue_detection_accuracy:.4f}"
         )
 
-        image_metrics = {"Example-Predictions/Train": train_example_img}
+        if unsup_train_example_img is not None:
+            image_metrics = {"Example-Predictions/Train": train_example_img,
+                             "Example-Unsupervised-Predictions/Train": unsup_train_example_img}
+        else:
+            image_metrics = {"Example-Predictions/Train": train_example_img}
 
         return scalar_metrics, image_metrics
 
@@ -242,7 +246,7 @@ class CellViTTrainer(BaseTrainer):
         num_batches: int,
         epoch: int,
         return_example_images: bool,
-    ) -> Tuple[dict, Union[plt.Figure, None]]:
+    ):
         """Training step
 
         Args:
@@ -266,6 +270,8 @@ class CellViTTrainer(BaseTrainer):
 
         consistency_weight = ConsistencyWeight(2.5, 131)
 
+        unsupervised = False
+
         if self.mixed_precision:
             with torch.autocast(device_type="cuda", dtype=torch.float16):
                 if epoch < self.experiment_config["training"].get("sup_only_epoch", 0):
@@ -283,6 +289,7 @@ class CellViTTrainer(BaseTrainer):
                     self.loss_avg_tracker["Unsupervised_Loss"].update(unsup_loss.detach().cpu().numpy())
                 else:
                     #p_threshold = self.experiment_config["training"]["unsupervised"].get("threshold", 0.95)
+                    unsupervised = True
                     with torch.no_grad():
                         self.model_teacher.eval()
                         predictions_u_ = self.model_teacher.forward(u_imgs_weak.detach())
@@ -321,8 +328,7 @@ class CellViTTrainer(BaseTrainer):
 
                     # unsupervised loss
 
-                    unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,
-                                                                predictions_u)
+                    unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,  predictions_u)
                     weight = consistency_weight(epoch)
                     unsup_loss *= weight
 
@@ -382,10 +388,16 @@ class CellViTTrainer(BaseTrainer):
             return_example_images = self.generate_example_image(
                 imgs, predictions, gt, num_images=4, num_nuclei_classes=self.num_classes
             )
+            if unsupervised:
+                return_example_images_usup = self.generate_example_image(
+                    u_imgs_weak, predictions_u_strong,  predictions_u, num_images=4, num_nuclei_classes=self.num_classes, u_imgs_strong
+                )
+            else:
+                return_example_images_usup = None
         else:
-            return_example_images = None
+            return_example_images = (None, None)
 
-        return batch_metrics, return_example_images
+        return batch_metrics, (return_example_images, return_example_images_usup)
 
     def validation_epoch(
         self, epoch: int, val_dataloader: DataLoader
@@ -980,6 +992,7 @@ class CellViTTrainer(BaseTrainer):
         ground_truth: dict,
         num_nuclei_classes: int,
         num_images: int = 2,
+        imgs2 = None
     ) -> plt.Figure:
         """Generate example plot with image, binary_pred, hv-map and instance map from prediction and ground-truth
 
@@ -1014,6 +1027,12 @@ class CellViTTrainer(BaseTrainer):
             imgs[sample_indices].permute(0, 2, 3, 1).contiguous().cpu().numpy()
         )  # convert to rgb
         sample_images = cropping_center(sample_images, (h, w), True)
+
+        if imgs2 is not None:
+            sample_images2 = (
+                imgs2[sample_indices].permute(0, 2, 3, 1).contiguous().cpu().numpy()
+            )  # convert to rgb
+            sample_images2 = cropping_center(sample_images2, (h, w), True)
 
         # get predictions
         pred_sample_binary_map = (
@@ -1062,7 +1081,10 @@ class CellViTTrainer(BaseTrainer):
             placeholder = np.zeros((2 * h, 6 * w, 3))
             # orig image
             placeholder[:h, :w, :3] = sample_images[i]
-            placeholder[h : 2 * h, :w, :3] = sample_images[i]
+            if imgs2 is not None:
+                placeholder[h : 2 * h, :w, :3] = sample_images2[i]
+            else:
+                placeholder[h: 2 * h, :w, :3] = sample_images[i]
             # binary prediction
             placeholder[:h, w : 2 * w, :3] = rgba2rgb(
                 binary_cmap(gt_sample_binary_map[i] * 255)

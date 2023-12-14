@@ -829,7 +829,7 @@ class ExperimentCellViT(BaseExperiment):
             p = transform_settings["elastictransform"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(
-                    A.ElasticTransform(p=p, sigma=8, alpha=991, alpha_affine=15)
+                    A.ElasticTransform(p=p, sigma=25, alpha=0.5, alpha_affine=15)
                 )
 
         if "normalize" in transform_settings.keys():

@@ -74,7 +74,7 @@ training:
   validation_frequency: 5
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: 25
+  sup_only_epoch: -1
   batch_size: 16
   epochs: 130
   optimizer: AdamW
@@ -118,13 +118,13 @@ transformations:
     scale_setting: 0.25
     scale_color: 0.1
   superpixels:
-    p: 1.0
+    p: 0.1
   zoomblur:
     p: 0.1
   randomsizedcrop:
     p: 0.1
   elastictransform:
-    p: 0.75
+    p: 0.2
   normalize:
     mean:
     - 0.485
