@@ -785,6 +785,8 @@ class ExperimentCellViT(BaseExperiment):
                 )
         if "Solarize".lower() in transform_settings:
             p = transform_settings["solarize"]["p"]
+            print('!!!')
+            print('solarize')
             threshold = transform_settings["solarize"]["threshold"]
             transform_list.append(
                 A.Solarize(
@@ -842,6 +844,8 @@ class ExperimentCellViT(BaseExperiment):
 
         train_transforms = A.Compose(transform_list)
         val_transforms = A.Compose([A.Normalize(mean=mean, std=std)])
+
+        print(train_transforms)
 
         return train_transforms, val_transforms
 
