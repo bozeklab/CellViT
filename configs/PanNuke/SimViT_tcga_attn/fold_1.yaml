@@ -124,7 +124,7 @@ transformations:
   randomsizedcrop:
     p: 0.1
   elastictransform:
-    p: 1.0
+    p: 0.75
   normalize:
     mean:
     - 0.485
