@@ -180,7 +180,7 @@ class CellViTTrainer(BaseTrainer):
                 epoch,
                 return_example_images=return_example_images,
             )
-            if example_img is not None:
+            if example_img[0] is not None:
                 train_example_img, unsup_train_example_img = example_img
             binary_dice_scores = (
                 binary_dice_scores + batch_metrics["binary_dice_scores"]
