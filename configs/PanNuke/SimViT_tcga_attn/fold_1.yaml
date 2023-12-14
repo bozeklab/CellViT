@@ -99,9 +99,9 @@ training:
 
 transformations:
   randomrotate90:
-    p: 1.0
+    p: 0.5
   horizontalflip:
-    p: 0.1
+    p: 0.5
   verticalflip:
     p: 0.5
   downscale:
@@ -127,12 +127,12 @@ transformations:
     p: 0.2
   normalize:
     mean:
-    - 0.485
-    - 0.456
-    - 0.406
+    - 1.485
+    - 1.456
+    - 1.406
     std:
-    - 0.229
-    - 0.224
-    - 0.225
+    - 2.229
+    - 2.224
+    - 2.225
 
 eval_checkpoint: "latest_checkpoint.pth"
