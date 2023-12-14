@@ -126,6 +126,8 @@ class PanNukeDataset(CellDataset):
         img = torch.Tensor(img).type(torch.float32)
         img = img.permute(2, 0, 1)
         if torch.max(img) >= 5:
+            print('!!!!')
+            print(img)
             img = img / 255
 
         masks = {
