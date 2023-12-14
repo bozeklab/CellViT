@@ -99,9 +99,9 @@ training:
 
 transformations:
   randomrotate90:
-    p: 0.5
+    p: 0.1
   horizontalflip:
-    p: 0.5
+    p: 0.1
   verticalflip:
     p: 0.5
   downscale:
