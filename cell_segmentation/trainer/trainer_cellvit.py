@@ -294,7 +294,6 @@ class CellViTTrainer(BaseTrainer):
                         self.model_teacher.eval()
                         predictions_u_ = self.model_teacher.forward(u_imgs_weak.detach())
                         predictions_u = self.unpack_predictions(predictions=predictions_u_)
-
                         # obtain pseudos
                         _, nuclei_type_map = torch.max(predictions_u["nuclei_type_map"], dim=-1)
                         nuclei_type_one_hot = F.one_hot(nuclei_type_map, num_classes=self.num_classes).type(torch.float32)
@@ -327,7 +326,6 @@ class CellViTTrainer(BaseTrainer):
                     sup_loss = self.calculate_sup_loss(predictions, gt)
 
                     # unsupervised loss
-
                     unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,  predictions_u)
                     weight = consistency_weight(epoch)
                     unsup_loss *= weight
@@ -1060,6 +1058,10 @@ class CellViTTrainer(BaseTrainer):
         gt_sample_binary_map = (
             ground_truth["nuclei_binary_map"][sample_indices].detach().cpu().numpy()
         )
+
+        print('!!!')
+        print(gt_sample_binary_map.shape)
+
         gt_sample_hv_map = ground_truth["hv_map"][sample_indices].detach().cpu().numpy()
         gt_sample_instance_map = (
             ground_truth["instance_map"][sample_indices].detach().cpu().numpy()
