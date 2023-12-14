@@ -388,9 +388,11 @@ class CellViTTrainer(BaseTrainer):
             return_example_images = self.generate_example_image(
                 imgs, predictions, gt, num_images=4, num_nuclei_classes=self.num_classes
             )
+            return_example_images_usup = None
             if unsupervised:
                 return_example_images_usup = self.generate_example_image(
-                    u_imgs_weak, predictions_u_strong,  predictions_u, num_images=4, num_nuclei_classes=self.num_classes, imgs2=u_imgs_strong
+                    u_imgs_weak, predictions_u_strong,  predictions_u, num_images=4, num_nuclei_classes=self.num_classes,
+                    imgs2=u_imgs_strong
                 )
             else:
                 return_example_images_usup = None
