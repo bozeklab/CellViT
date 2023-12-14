@@ -298,7 +298,8 @@ class CellViTTrainer(BaseTrainer):
                         if return_example_images:
                             predictions_u_vis = {"nuclei_type_map": predictions_u["nuclei_type_map"].clone(),
                                                  "nuclei_binary_map": predictions_u["nuclei_binary_map"].clone(),
-                                                 "hv_map": predictions_u["hv_map"].clone()}
+                                                 "hv_map": predictions_u["hv_map"].clone(),
+                                                 "instance_map": predictions_u["instance_map"].clone()}
 
                             predictions_u_vis["nuclei_binary_map"] = torch.argmax(predictions_u_vis["nuclei_binary_map"], dim=-1).type(
                                 torch.uint8
@@ -1069,7 +1070,6 @@ class CellViTTrainer(BaseTrainer):
         gt_sample_binary_map = (
             ground_truth["nuclei_binary_map"][sample_indices].detach().cpu().numpy()
         )
-
         gt_sample_hv_map = ground_truth["hv_map"][sample_indices].detach().cpu().numpy()
         gt_sample_instance_map = (
             ground_truth["instance_map"][sample_indices].detach().cpu().numpy()
