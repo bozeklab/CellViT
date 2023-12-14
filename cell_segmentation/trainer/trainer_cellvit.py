@@ -324,7 +324,6 @@ class CellViTTrainer(BaseTrainer):
 
                     unsup_loss = self.compute_unsupervised_loss(predictions_u_strong,
                                                                 predictions_u)
-                    #unsup_loss *= self.experiment_config["training"]["unsupervised"].get("loss_weight", 1.0)
                     weight = consistency_weight(epoch)
                     unsup_loss *= weight
 
