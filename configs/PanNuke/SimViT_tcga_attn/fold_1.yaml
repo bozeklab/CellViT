@@ -124,15 +124,15 @@ transformations:
   randomsizedcrop:
     p: 0.1
   elastictransform:
-    p: 0.2
+    p: 1.0
   normalize:
     mean:
-    - 1.485
-    - 1.456
-    - 1.406
+    - 0.485
+    - 0.456
+    - 0.406
     std:
-    - 2.229
-    - 2.224
-    - 2.225
+    - 0.229
+    - 0.224
+    - 0.225
 
 eval_checkpoint: "latest_checkpoint.pth"
