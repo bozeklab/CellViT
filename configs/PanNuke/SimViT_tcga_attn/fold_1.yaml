@@ -3,6 +3,7 @@ logging:
   project: # Adapt
   notes: SIMCellViTSemiSupervised
   log_comment: SIMCellViT_1600_tcga_semi-Fold-1
+  log_images: True
   tags:
   - "Fold-1"
   - "SIMCellViT_1600_tcga_attn"
