@@ -42,6 +42,8 @@ def process_fold(fold, input_path, output_path) -> None:
         im = Image.fromarray(out_img.astype(np.uint8))
         im.save(output_fold_path / "images" / outname)
 
+    im.save(f"Images/{outname}")
+
     print("Process masks")
     for i in tqdm(range(len(images)), total=len(images)):
         outname = f"{fold}_{i}.npy"

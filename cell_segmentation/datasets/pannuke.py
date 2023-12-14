@@ -356,10 +356,15 @@ class PanNukeDataset(CellDataset):
 class PanNukeDatasetUnlabelled(PanNukeDataset):
     def __init__(self, dataset_path, folds,
                  transforms_strong,
-                 transforms_weak) -> None:
+                 transforms_weak,
+                 mean,
+                 std) -> None:
         super().__init__(dataset_path, folds)
         self.transforms_strong = transforms_strong
         self.transforms_weak = transforms_weak
+
+        self.mean = mean
+        self.std = std
 
         logger.info(f"Created Pannuke Unlabeled Dataset by using fold(s) {self.folds}")
         logger.info(f"Resulting dataset length: {self.__len__()}")
@@ -370,8 +375,6 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
 
         Args:
             index (int): Index of element to retrieve
-
-
         """
         img_path = self.images[index]
         img = Image.open(img_path)
@@ -379,7 +382,7 @@ class PanNukeDatasetUnlabelled(PanNukeDataset):
         img_weak = self.transforms_weak(image=img)
         img_str = self.transforms_strong(img_weak)
 
-        img_weak = ToTensorAndNormalize()(img_weak)
-        img_str = ToTensorAndNormalize()(img_str)
+        img_weak = ToTensorAndNormalize(self.mean, self.std)(img_weak)
+        img_str = ToTensorAndNormalize(self.mean, self.std)(img_str)
 
         return img_weak, img_str

@@ -290,8 +290,7 @@ class CellViTTrainer(BaseTrainer):
 
                         # obtain pseudos
                         _, nuclei_type_map = torch.max(predictions_u["nuclei_type_map"], dim=-1)
-                        nuclei_type_one_hot = F.one_hot(nuclei_type_map,
-                                                   num_classes=self.num_classes).type(torch.float32)
+                        nuclei_type_one_hot = F.one_hot(nuclei_type_map, num_classes=self.num_classes).type(torch.float32)
                         predictions_u["nuclei_type_map"] = nuclei_type_one_hot
                         _, nuclei_binary_map = torch.max(predictions_u["nuclei_binary_map"], dim=-1)
                         #print(nuclei_binary_map[:2, :].detach().cpu().numpy())
@@ -1005,7 +1004,6 @@ class CellViTTrainer(BaseTrainer):
         """
 
         assert num_images <= imgs.shape[0]
-        num_images = 4
 
         h = ground_truth["hv_map"].shape[1]
         w = ground_truth["hv_map"].shape[2]

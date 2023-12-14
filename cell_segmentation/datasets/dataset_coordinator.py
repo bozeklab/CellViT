@@ -16,6 +16,8 @@ def select_dataset(
     dataset_name: str, split: str, dataset_config: dict,
         transforms: Callable = None,
         transforms2: Callable = None,
+        mean = None,
+        std = None
 ) -> Dataset:
     """Select a cell segmentation dataset from the provided ones, currently just PanNuke is implemented here
 
@@ -58,7 +60,9 @@ def select_dataset(
             dataset_path=dataset_config["dataset_path"],
             folds=folds,
             transforms_weak=transforms,
-            transforms_strong=transforms2
+            transforms_strong=transforms2,
+            mean=mean,
+            std=std
         )
     else:
         raise NotImplementedError(f"Unknown dataset: {dataset_name}")

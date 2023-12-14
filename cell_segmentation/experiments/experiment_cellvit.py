@@ -208,7 +208,6 @@ class ExperimentCellViT(BaseExperiment):
             input_shape=self.run_conf["data"].get("input_shape", 256),
         )
 
-
         dataset_name = self.run_conf["data"]["dataset"]
         unlabeled_dataset_name = self.run_conf["data"]["dataset_unlabeled"]
         train_dataset, val_dataset = self.get_datasets(
@@ -217,12 +216,17 @@ class ExperimentCellViT(BaseExperiment):
             val_transforms=val_transforms,
         )
 
+        mean = self.run_conf["transformations"]["normalize"].get("mean", (0.5, 0.5, 0.5))
+        std = self.run_conf["transformations"]["normalize"].get("std", (0.5, 0.5, 0.5))
+
         train_u_dataset = select_dataset(
             dataset_name=unlabeled_dataset_name,
             split="train",
             dataset_config=self.run_conf["data"],
             transforms=build_basic_transfrom(),
-            transforms2=strong_img_aug(num_augs=3)
+            transforms2=strong_img_aug(num_augs=3),
+            mean=mean,
+            std=std
         )
 
         # load sampler
