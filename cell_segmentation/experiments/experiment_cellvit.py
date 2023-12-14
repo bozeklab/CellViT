@@ -739,18 +739,18 @@ class ExperimentCellViT(BaseExperiment):
             p = transform_settings["horizontalflip"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(A.HorizontalFlip(p=p))
-        if "VerticalFlip".lower() in transform_settings:
+        if "VerticalFlip".lower() in transform_settings.keys():
             p = transform_settings["verticalflip"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(A.VerticalFlip(p=p))
-        if "Downscale".lower() in transform_settings:
+        if "Downscale".lower() in transform_settings.keys():
             p = transform_settings["downscale"]["p"]
             scale = transform_settings["downscale"]["scale"]
             if p > 0 and p <= 1:
                 transform_list.append(
                     A.Downscale(p=p, scale_max=scale, scale_min=scale)
                 )
-        if "Posterize".lower() in transform_settings:
+        if "Posterize".lower() in transform_settings.keys():
             p = transform_settings["posterize"]["p"]
             num_bits = transform_settings["posterize"].get("num_bits", (4, 8))
             transform_list.append(
@@ -759,17 +759,17 @@ class ExperimentCellViT(BaseExperiment):
                     num_bits=num_bits
                 )
             )
-        if "Blur".lower() in transform_settings:
+        if "Blur".lower() in transform_settings.keys():
             p = transform_settings["blur"]["p"]
             blur_limit = transform_settings["blur"]["blur_limit"]
             if p > 0 and p <= 1:
                 transform_list.append(A.Blur(p=p, blur_limit=blur_limit))
-        if "GaussNoise".lower() in transform_settings:
+        if "GaussNoise".lower() in transform_settings.keys():
             p = transform_settings["gaussnoise"]["p"]
             var_limit = transform_settings["gaussnoise"]["var_limit"]
             if p > 0 and p <= 1:
                 transform_list.append(A.GaussNoise(p=p, var_limit=var_limit))
-        if "ColorJitter".lower() in transform_settings:
+        if "ColorJitter".lower() in transform_settings.keys():
             p = transform_settings["colorjitter"]["p"]
             scale_setting = transform_settings["colorjitter"]["scale_setting"]
             scale_color = transform_settings["colorjitter"]["scale_color"]
@@ -783,7 +783,7 @@ class ExperimentCellViT(BaseExperiment):
                         hue=scale_color / 2,
                     )
                 )
-        if "Solarize".lower() in transform_settings:
+        if "Solarize".lower() in transform_settings.keys():
             p = transform_settings["solarize"]["p"]
             threshold = transform_settings["solarize"]["threshold"]
             transform_list.append(
@@ -792,14 +792,14 @@ class ExperimentCellViT(BaseExperiment):
                     threshold=threshold
                 )
             )
-        if "Equalize".lower() in transform_settings:
+        if "Equalize".lower() in transform_settings.keys():
             p = transform_settings["equalize"]["p"]
             transform_list.append(
                 A.Equalize(
                     p=p,
                 )
             )
-        if "Superpixels".lower() in transform_settings:
+        if "Superpixels".lower() in transform_settings.keys():
             p = transform_settings["superpixels"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(
@@ -810,11 +810,11 @@ class ExperimentCellViT(BaseExperiment):
                         max_size=int(input_shape / 2),
                     )
                 )
-        if "ZoomBlur".lower() in transform_settings:
+        if "ZoomBlur".lower() in transform_settings.keys():
             p = transform_settings["zoomblur"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(A.ZoomBlur(p=p, max_factor=1.05))
-        if "RandomSizedCrop".lower() in transform_settings:
+        if "RandomSizedCrop".lower() in transform_settings.keys():
             p = transform_settings["randomsizedcrop"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(
@@ -825,14 +825,14 @@ class ExperimentCellViT(BaseExperiment):
                         p=p,
                     )
                 )
-        if "ElasticTransform".lower() in transform_settings:
+        if "ElasticTransform".lower() in transform_settings.keys():
             p = transform_settings["elastictransform"]["p"]
             if p > 0 and p <= 1:
                 transform_list.append(
                     A.ElasticTransform(p=p, sigma=25, alpha=0.5, alpha_affine=15)
                 )
 
-        if "normalize" in transform_settings:
+        if "normalize" in transform_settings.keys():
             mean = transform_settings["normalize"].get("mean", (0.5, 0.5, 0.5))
             std = transform_settings["normalize"].get("std", (0.5, 0.5, 0.5))
         else:
