@@ -188,8 +188,8 @@ class BaseTrainer:
                     early_stopping_metric,
                 ) = self.validation_epoch(epoch, val_dataloader)
                 wandb.log(val_scalar_metrics, step=epoch + 1)
-            if self.log_images:
-                wandb.log(val_image_metrics, step=epoch + 1)
+                if self.log_images:
+                    wandb.log(val_image_metrics, step=epoch + 1)
 
             # log learning rate
             curr_lr = self.optimizer.param_groups[0]["lr"]
