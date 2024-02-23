@@ -1,13 +1,13 @@
 logging:
   mode: online
   project: # Adapt
-  notes: SIMCellViTSemiSupervised
-  log_comment: SIMCellViT_1600_tcga_semi-Fold-1
+  notes: SIMCellViTSupervised
+  log_comment: SIMCellViT_1600_tcga-Fold-1
   tags:
   - "Fold-1"
   - "SIMCellViT_1600_tcga"
   wandb_dir: ./results
-  log_dir: ./results/PanNuke/SIMCellViT_1600_tcga_semi
+  log_dir: ./results/PanNuke/SIMCellViT_1600_tcga
   level: Debug
   group: SIMCellViT_tcga
 
@@ -32,7 +32,7 @@ data:
 model:
   ema_decay: 0.996
   backbone: SimViT
-  pretrained_encoder: /data/pwojcik/SimMIM/TCGA_attn_hint/checkpoint-latest.pth # Adapt to your path
+  pretrained_encoder: /data/pwojcik/SimMIM/TCGA_256/checkpoint-latest.pth # Adapt to your path
   shared_skip_connections: true
 
 loss:
@@ -73,7 +73,7 @@ training:
   validation_frequency: 5
   attn_drop_rate: 0.1
   drop_path_rate: 0.1
-  sup_only_epoch: 25
+  sup_only_epoch: 130
   batch_size: 16
   epochs: 130
   optimizer: AdamW
