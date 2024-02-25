@@ -1,13 +1,13 @@
 logging:
   mode: online
   project: # Adapt
-  notes: SIMCellViTSemiSupervised
-  log_comment: SIMCellViT_1600_tcga_semi-Fold-3
+  notes: SIMCellViTSupervised
+  log_comment: SIMCellViT_1600_tcga-Fold-3
   tags:
   - "Fold-3"
   - "SIMCellViT_1600_tcga"
   wandb_dir: ./results
-  log_dir: ./results/PanNuke/SIMCellViT_1600_tcga_semi
+  log_dir: ./results/PanNuke/SIMCellViT_1600_tcga
   level: Debug
   group: SIMCellViT_tcga
 
