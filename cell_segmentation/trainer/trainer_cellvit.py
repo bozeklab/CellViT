@@ -231,7 +231,8 @@ class CellViTTrainer(BaseTrainer):
             f"Tissue-MC-Acc.: {tissue_detection_accuracy:.4f}"
         )
 
-        if unsup_train_example_img is not None:
+        if False:
+        #if unsup_train_example_img is not None:
             image_metrics = {"Example-Predictions/Train": train_example_img,
                              "Example-Unsupervised-Predictions/Train": unsup_train_example_img}
         else:
