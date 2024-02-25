@@ -387,7 +387,7 @@ class CellViTTrainer(BaseTrainer):
 
         batch_metrics = self.calculate_step_metric_train(predictions, gt)
 
-        if return_example_images:
+        if False:
             return_example_images = self.generate_example_image(
                 imgs, predictions, gt, num_images=4, num_nuclei_classes=self.num_classes
             )
